@@ -1,3 +1,5 @@
+add_subdirectory(service)
+
 set(TARGET hihgload_server)
 
 set(SOURCES
@@ -5,6 +7,9 @@ set(SOURCES
 )
 
 set(LIBRARIES
+    service
+    database
+
     ${CONAN_LIBS}
 )
 
