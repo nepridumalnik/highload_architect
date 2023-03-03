@@ -15,4 +15,8 @@ struct AbstractTableModel
     /// @param Строка
     /// @return True, если удачно
     virtual bool FindById(const int id, T &row) = 0;
+
+    /// @brief Удалить пользователя по идентификатору
+    /// @param id Идентификатор
+    virtual void Delete(const int id) = 0;
 };

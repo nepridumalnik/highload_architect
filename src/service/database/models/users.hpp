@@ -51,6 +51,9 @@ public:
     /// @see AbstractTableModel
     virtual bool FindById(const int id, User &user) final;
 
+    /// @see AbstractTableModel
+    void Delete(const int id) final;
+
 private:
     /// @brief База данных
     std::shared_ptr<soci::session> sql_;
@@ -60,4 +63,7 @@ private:
 
     /// @brief Запрос по выбору одного пользователя
     soci::statement select_;
+
+    /// @brief Запрос по удалению пользователя
+    soci::statement delete_;
 };

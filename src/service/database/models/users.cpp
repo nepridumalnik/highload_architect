@@ -28,12 +28,16 @@ namespace querries
     static const std::string SelectUser = "SELECT ID, Name, SecondName, Age, Male, Interests, City "
                                           "FROM Users WHERE ID = :ID";
 
+    /// @brief Удалить пользователя
+    static const std::string DeleteUser = "DELETE FROM Users WHERE ID = :ID";
+
 } // namespace querries
 
 UsersTable::UsersTable(std::shared_ptr<soci::session> sql)
     : sql_{sql},
       insert_{*sql_},
-      select_{*sql_}
+      select_{*sql_},
+      delete_{*sql_}
 {
     try
     {
@@ -44,6 +48,7 @@ UsersTable::UsersTable(std::shared_ptr<soci::session> sql)
         // Компиляция команд
         insert_.prepare(querries::InsertUser);
         select_.prepare(querries::SelectUser);
+        delete_.prepare(querries::DeleteUser);
     }
     catch (const std::exception &e)
     {
@@ -97,6 +102,27 @@ bool UsersTable::FindById(int id, User &user)
         select_.bind_clean_up();
 
         return result;
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << e.what() << std::endl;
+        throw;
+    }
+}
+
+void UsersTable::Delete(const int id)
+{
+    try
+    {
+        soci::transaction transaction{*sql_};
+
+        delete_.exchange(soci::use(id));
+
+        delete_.define_and_bind();
+        delete_.execute(true);
+        delete_.bind_clean_up();
+
+        transaction.commit();
     }
     catch (const std::exception &e)
     {
