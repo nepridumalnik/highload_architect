@@ -22,7 +22,7 @@ void Service::Run()
 
     // Stub
     // TODO: remove stub
-    auto lambda = [](boost::asio::ip::tcp::socket socket) {};
+    auto lambda = [](boost::asio::ip::tcp::socket &socket) {};
 
     Connection connection{80, lambda};
 

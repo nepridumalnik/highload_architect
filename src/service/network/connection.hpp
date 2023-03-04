@@ -7,7 +7,7 @@
 #include <memory>
 
 /// @brief Колбэк, вызываемый с сокетом
-using callback = std::function<void(boost::asio::ip::tcp::socket)>;
+using callback = std::function<void(boost::asio::ip::tcp::socket&)>;
 
 /// @brief Соединение
 class Connection
