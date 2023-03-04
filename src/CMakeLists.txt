@@ -9,6 +9,7 @@ set(SOURCES
 set(LIBRARIES
     service
     database
+    network
 
     ${CONAN_LIBS}
 )
