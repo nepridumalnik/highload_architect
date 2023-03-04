@@ -8,8 +8,6 @@
 #include <boost/thread.hpp>
 #include <boost/asio.hpp>
 
-#include <vector>
-
 static const std::string ConnectionInfo = "host=localhost port=3306 dbname=main_database user=root password===PaSsWoRd==";
 
 Service::Service()
