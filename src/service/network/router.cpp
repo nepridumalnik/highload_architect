@@ -2,13 +2,24 @@
 
 #include <boost/beast.hpp>
 
+#include <iostream>
+
 void Router::operator()(boost::asio::ip::tcp::socket &socket)
 {
     using namespace boost::beast;
 
     flat_buffer buf;
     http::request<http::dynamic_body> req;
-    http::read(socket, buf, req);
+
+    try
+    {
+        http::read(socket, buf, req);
+    }
+    catch (const boost::beast::http::error &e)
+    {
+        std::cerr << "Error reading HTTP request: " << static_cast<int>(e) << std::endl;
+        return;
+    }
 
     auto it = controllers_.find(req.target());
 
