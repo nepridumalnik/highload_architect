@@ -1,5 +1,7 @@
 #pragma once
 
+/// @brief Интерфейс модели
+/// @tparam T тип структуры
 template <typename T>
 struct AbstractTableModel
 {

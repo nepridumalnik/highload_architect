@@ -16,7 +16,7 @@ public:
     /// @brief Конструктор
     Connection(const size_t port, callback cb);
 
-    /// @brief Метод, делающий класс "вызываемым"
+    /// @brief Получение соединений
     void operator()();
 
 private:

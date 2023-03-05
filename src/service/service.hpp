@@ -1,6 +1,7 @@
 #pragma once
 
 #include <service/database/models/users.hpp>
+#include <service/network/router.hpp>
 
 #include <memory>
 
@@ -25,4 +26,7 @@ private:
 
     /// @brief Таблица пользователей
     std::shared_ptr<UsersTable> usersTable_;
+
+    /// @brief Маршрутизатор
+    Router router_;
 };

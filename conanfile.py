@@ -27,6 +27,7 @@ class HighloadServer(ConanFile):
         ]
 
         self.options['soci'].with_mysql = self.options.with_mysql
+        self.options["boost"].shared = True
 
     def requirements(self) -> None:
         self.requires('boost/1.81.0')
