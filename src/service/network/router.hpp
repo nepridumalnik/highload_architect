@@ -4,8 +4,8 @@
 
 #include <boost/asio.hpp>
 
-#include <unordered_map>
 #include <memory>
+#include <map>
 
 /// @brief Класс для маршрутизации
 class Router
@@ -22,5 +22,5 @@ public:
 
 private:
     /// @brief Контроллеры
-    std::unordered_map<std::string, std::unique_ptr<AbstractController>> controllers_;
+    std::map<std::string, std::unique_ptr<AbstractController>> controllers_;
 };

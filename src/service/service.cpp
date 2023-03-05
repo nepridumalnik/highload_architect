@@ -1,5 +1,6 @@
 #include <service/service.hpp>
 
+#include <service/network/controllers/users.hpp>
 #include <service/network/connection.hpp>
 #include <service/network/router.hpp>
 
@@ -14,7 +15,7 @@ static const std::string ConnectionInfo = "host=localhost port=3306 dbname=main_
 Service::Service()
 {
     sql_ = std::make_shared<soci::session>(soci::mysql, ConnectionInfo);
-    usersTable_ = std::make_shared<UsersTable>(sql_);
+    router_.AddController("/user", std::make_unique<UsersController>(sql_));
 }
 
 void Service::Run()
