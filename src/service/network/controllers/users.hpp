@@ -24,6 +24,9 @@ public:
     void HandleRequest(const boost::beast::http::request<boost::beast::http::dynamic_body> &req,
                        boost::beast::websocket::response_type &res) final;
 
+    /// @see AbstractController
+    bool IsRouteHandled(const std::string &route) final;
+
 private:
     /// @brief Таблица с пользователями
     std::unique_ptr<UsersTable> usersTable_;

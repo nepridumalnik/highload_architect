@@ -21,20 +21,25 @@ void Router::operator()(boost::asio::ip::tcp::socket &socket)
         return;
     }
 
-    auto it = controllers_.find(req.target());
+    const std::string target = req.target();
 
-    if (it != controllers_.end())
+    for (auto &controller : controllers_)
     {
-        http::response<http::string_body> res;
+        if (controller->IsRouteHandled(target))
+        {
+            http::response<http::string_body> res;
 
-        it->second->HandleRequest(req, res);
+            controller->HandleRequest(req, res);
 
-        res.prepare_payload();
-        http::write(socket, res);
+            res.prepare_payload();
+            http::write(socket, res);
+
+            break;
+        }
     }
 }
 
-void Router::AddController(const std::string &route, std::unique_ptr<AbstractController> controller)
+void Router::AddController(std::unique_ptr<AbstractController> controller)
 {
-    controllers_.insert({route, std::move(controller)});
+    controllers_.push_back(std::move(controller));
 }

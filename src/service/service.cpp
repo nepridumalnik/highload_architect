@@ -15,7 +15,7 @@ static const std::string ConnectionInfo = "host=localhost port=3306 dbname=main_
 Service::Service()
 {
     sql_ = std::make_shared<soci::session>(soci::mysql, ConnectionInfo);
-    router_.AddController("/user", std::make_unique<UsersController>(sql_));
+    router_.AddController(std::make_unique<UsersController>(sql_));
 }
 
 void Service::Run()

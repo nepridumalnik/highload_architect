@@ -12,3 +12,8 @@ void UsersController::HandleRequest(const http::request<http::dynamic_body> &req
 {
     res.body() = "<h1>Hello, User!</h1>";
 }
+
+bool UsersController::IsRouteHandled(const std::string &address)
+{
+    return true;
+}
