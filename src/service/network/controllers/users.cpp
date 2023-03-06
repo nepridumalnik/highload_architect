@@ -13,7 +13,7 @@ void UsersController::HandleRequest(const http::request<http::dynamic_body> &req
     res.body() = "<h1>Hello, User!</h1>";
 }
 
-bool UsersController::IsRouteHandled(const std::string &route)
+bool UsersController::HasRoute(const std::string &route)
 {
     static const std::string loginRoute = "/login";
     static const std::string userRegisterRoute = "/user/register";

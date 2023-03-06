@@ -18,5 +18,5 @@ struct AbstractController
     /// @brief Проверить, обрабатываем ли маршрут
     /// @param route Маршрут
     /// @return True, если обрабатываем
-    virtual bool IsRouteHandled(const std::string& route) = 0;
+    virtual bool HasRoute(const std::string& route) = 0;
 };

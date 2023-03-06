@@ -25,7 +25,7 @@ void Router::operator()(boost::asio::ip::tcp::socket &socket)
 
     for (auto &controller : controllers_)
     {
-        if (controller->IsRouteHandled(target))
+        if (controller->HasRoute(target))
         {
             http::response<http::string_body> res;
 

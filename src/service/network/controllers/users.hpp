@@ -25,7 +25,7 @@ public:
                        boost::beast::websocket::response_type &res) final;
 
     /// @see AbstractController
-    bool IsRouteHandled(const std::string &route) final;
+    bool HasRoute(const std::string &route) final;
 
 private:
     /// @brief Залогиниться

@@ -7,7 +7,7 @@
 #include <memory>
 
 /// @brief Колбэк, вызываемый с сокетом
-using callback = std::function<void(boost::asio::ip::tcp::socket&)>;
+using callback = std::function<void(boost::asio::ip::tcp::socket &)>;
 
 /// @brief Соединение
 class Connection
@@ -18,6 +18,11 @@ public:
 
     /// @brief Получение соединений
     void operator()();
+
+private:
+    /// @brief Запуск задачи
+    /// @param socket Сокет
+    void runTask(boost::asio::ip::tcp::socket socket);
 
 private:
     /// @brief Контекст asio
