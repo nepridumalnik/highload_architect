@@ -13,7 +13,34 @@ void UsersController::HandleRequest(const http::request<http::dynamic_body> &req
     res.body() = "<h1>Hello, User!</h1>";
 }
 
-bool UsersController::IsRouteHandled(const std::string &address)
+bool UsersController::IsRouteHandled(const std::string &route)
 {
-    return true;
+    static const std::string loginRoute = "/login";
+    static const std::string userRegisterRoute = "/user/register";
+    static const std::string userGetIdRoute = "/user/get/";
+
+    if (route == loginRoute)
+    {
+        return true;
+    }
+
+    if (route == userRegisterRoute)
+    {
+        return true;
+    }
+
+    if (route.size() > userGetIdRoute.size() && route.find(userGetIdRoute) == 0)
+    {
+        for (auto it = route.back(); it != '/'; --it)
+        {
+            if (!std::isdigit(it))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    return false;
 }
