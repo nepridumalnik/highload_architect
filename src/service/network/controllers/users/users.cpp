@@ -1,6 +1,6 @@
-#include <service/network/controllers/users.hpp>
+#include <service/network/controllers/users/users.hpp>
 
-#include <service/database/models/users.hpp>
+#include <service/database/models/users/users.hpp>
 
 using namespace boost::beast;
 

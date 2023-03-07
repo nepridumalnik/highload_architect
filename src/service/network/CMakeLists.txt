@@ -4,8 +4,8 @@ set(SOURCE
     connection.cpp
     router.cpp
 
-    controllers/users.cpp
-    controllers/subcontrollers/user_register.cpp
+    controllers/users/users.cpp
+    controllers/users/subcontrollers/user_register.cpp
 )
 
 add_library(${TARGET} ${SOURCE})

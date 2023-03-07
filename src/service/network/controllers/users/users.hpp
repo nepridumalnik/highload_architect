@@ -2,7 +2,7 @@
 
 #include <service/network/controllers/abstract_controller.hpp>
 
-#include <service/network/controllers/subcontrollers/user_register.hpp>
+#include <service/network/controllers/users/subcontrollers/user_register.hpp>
 
 #include <boost/beast.hpp>
 

@@ -1,4 +1,4 @@
-#include <service/database/models/users.hpp>
+#include <service/database/models/users/users.hpp>
 
 #include <soci/transaction.h>
 #include <soci/session.h>

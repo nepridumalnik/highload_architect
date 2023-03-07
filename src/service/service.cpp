@@ -1,6 +1,6 @@
 #include <service/service.hpp>
 
-#include <service/network/controllers/users.hpp>
+#include <service/network/controllers/users/users.hpp>
 #include <service/network/connection.hpp>
 #include <service/network/router.hpp>
 
