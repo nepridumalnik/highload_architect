@@ -2,11 +2,13 @@
 
 #include <service/network/controllers/abstract_controller.hpp>
 
-#include <service/database/models/users.hpp>
+#include <service/network/controllers/subcontrollers/user_register.hpp>
 
 #include <boost/beast.hpp>
 
 #include <memory>
+
+class UsersTable;
 
 namespace soci
 {
@@ -29,7 +31,7 @@ public:
 
 private:
     /// @brief Таблица с пользователями
-    std::unique_ptr<UsersTable> usersTable_;
+    std::shared_ptr<UsersTable> usersTable_;
 
     /// @brief Путь до /login
     static const std::string loginRoute;
@@ -39,4 +41,7 @@ private:
 
     /// @brief Путь до /user/get/:id
     static const std::string userGetIdRoute;
+
+    /// @brief Контроллер регистрации пользователей
+    std::unique_ptr<UserRegisterController> userRegister_;
 };

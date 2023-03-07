@@ -1,5 +1,7 @@
 #include <service/network/controllers/users.hpp>
 
+#include <service/database/models/users.hpp>
+
 using namespace boost::beast;
 
 const std::string UsersController::loginRoute = "/login";
@@ -11,12 +13,21 @@ const std::string UsersController::userGetIdRoute = "/user/get/";
 UsersController::UsersController(std::shared_ptr<soci::session> sql)
 {
     usersTable_ = std::make_unique<UsersTable>(sql);
+    userRegister_ = std::make_unique<UserRegisterController>(usersTable_);
 }
 
 void UsersController::HandleRequest(const http::request<http::dynamic_body> &req,
                                     websocket::response_type &res)
 {
-    res.body() = "<h1>Hello, User!</h1>";
+    const std::string route = req.target();
+
+    if (route == userRegisterRoute)
+    {
+        userRegister_->HandleRequest(req, res);
+        return;
+    }
+
+    res.body() = "<h1>Unhandled route</h1>";
 }
 
 bool UsersController::HasRoute(const std::string &route)
