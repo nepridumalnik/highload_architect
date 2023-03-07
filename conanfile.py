@@ -41,8 +41,13 @@ class HighloadServer(ConanFile):
         cmake.build()
 
     def imports(self) -> None:
-        self.copy('*.dll', dst='bin', src='bin', keep_path=False)
-        self.copy('*.dylib', dst='lib', src='lib', keep_path=False)
+        libraries = [
+            '*boost_system*',
+            '*boost_thread*',
+        ]
+
+        for library in libraries:
+            self.copy(library, dst='bin', src='bin', keep_path=False)
 
     def package(self) -> None:
         self.copy('*.h', dst='include', src='include')

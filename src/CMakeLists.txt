@@ -11,7 +11,14 @@ set(LIBRARIES
     database
     network
 
-    ${CONAN_LIBS}
+    boost_system
+    boost_thread
+
+    ${CONAN_LIBS_SOCI}
+    ${CONAN_LIBS_ZLIB}
+    ${CONAN_LIBS_ZSTD}
+    ${CONAN_LIBS_OPENSSL}
+    ${CONAN_LIBS_LIBMYSQLCLIENT}
 )
 
 set(INCLUDE_DIRS
