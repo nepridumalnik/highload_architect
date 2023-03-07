@@ -1,0 +1,15 @@
+{
+	"id": "f5f498de-c2f3-42da-bd5b-658c214d4f65",
+	"name": "Highload Server",
+	"values": [
+		{
+			"key": "baseUrl",
+			"value": "127.0.0.1",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2023-03-07T15:49:05.882Z",
+	"_postman_exported_using": "Postman/10.11.1"
+}
