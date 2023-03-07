@@ -2,6 +2,12 @@
 
 using namespace boost::beast;
 
+const std::string UsersController::loginRoute = "/login";
+
+const std::string UsersController::userRegisterRoute = "/user/register";
+
+const std::string UsersController::userGetIdRoute = "/user/get/";
+
 UsersController::UsersController(std::shared_ptr<soci::session> sql)
 {
     usersTable_ = std::make_unique<UsersTable>(sql);
@@ -15,10 +21,6 @@ void UsersController::HandleRequest(const http::request<http::dynamic_body> &req
 
 bool UsersController::HasRoute(const std::string &route)
 {
-    static const std::string loginRoute = "/login";
-    static const std::string userRegisterRoute = "/user/register";
-    static const std::string userGetIdRoute = "/user/get/";
-
     if (route == loginRoute)
     {
         return true;

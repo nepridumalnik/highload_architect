@@ -28,24 +28,15 @@ public:
     bool HasRoute(const std::string &route) final;
 
 private:
-    /// @brief Залогиниться
-    /// @param req Запрос
-    /// @param res Ответ
-    void login(const boost::beast::http::request<boost::beast::http::dynamic_body> &req,
-               boost::beast::websocket::response_type &res);
-
-    /// @brief Зарегистрироваться
-    /// @param req Запрос
-    /// @param res Ответ
-    void userRegister(const boost::beast::http::request<boost::beast::http::dynamic_body> &req,
-                      boost::beast::websocket::response_type &res);
-
-    /// @brief Получить пользователя по идентификатор
-    /// @param res Ответ
-    /// @param id Идентификатор
-    void userGetId(boost::beast::websocket::response_type &res, const size_t id);
-
-private:
     /// @brief Таблица с пользователями
     std::unique_ptr<UsersTable> usersTable_;
+
+    /// @brief Путь до /login
+    static const std::string loginRoute;
+
+    /// @brief Путь до /user/register
+    static const std::string userRegisterRoute;
+
+    /// @brief Путь до /user/get/:id
+    static const std::string userGetIdRoute;
 };
