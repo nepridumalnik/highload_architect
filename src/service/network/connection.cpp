@@ -12,21 +12,20 @@ void Connection::operator()()
 {
     do
     {
-        boost::asio::ip::tcp::socket socket(context_);
+        boost::asio::ip::tcp::socket socket{context_};
         acceptor_.accept(socket);
-
-        std::thread{
-            [cb = cb_, socket = std::move(socket)]() mutable
-            {
-                try
-                {
-                    cb(socket);
-                    socket.close();
-                }
-                catch (...)
-                {
-                }
-            }}
-            .detach();
+        std::thread(&Connection::runTask, this, std::move(socket)).detach();
     } while (true);
+}
+
+void Connection::runTask(boost::asio::ip::tcp::socket &&socket)
+{
+    try
+    {
+        cb_(socket);
+        socket.close();
+    }
+    catch (...)
+    {
+    }
 }
