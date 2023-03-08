@@ -8,12 +8,11 @@ struct AbstractJsonStruct
     /// @brief Получить из JSON объекта
     /// @param json JSON объект
     /// @return True, если удачно
-    virtual bool fromJson(const std::string &json) = 0;
+    virtual bool FromJson(const std::string &json) = 0;
 
     /// @brief Конвертировать в JSON объект
-    /// @param json JSON объект
-    /// @return True, если удачно
-    virtual bool toJson(std::string &json) = 0;
+    /// @return JSON объект
+    virtual std::string ToJson() = 0;
 };
 
 /// @brief Интерфейс модели

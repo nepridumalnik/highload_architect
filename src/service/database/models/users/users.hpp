@@ -39,10 +39,14 @@ struct User : public AbstractJsonStruct
     std::string password;
 
     /// @see AbstractJsonStruct
-    bool fromJson(const std::string &json) final;
+    bool FromJson(const std::string &json) final;
 
     /// @see AbstractJsonStruct
-    bool toJson(std::string &json) final;
+    std::string ToJson() final;
+
+    /// @brief Получить токен
+    /// @return Токен
+    std::string Tokenize();
 };
 
 /// @brief Класс, управляющий таблицей с пользователями

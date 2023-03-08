@@ -3,11 +3,15 @@
 #include <soci/transaction.h>
 #include <soci/session.h>
 
+#include <boost/uuid/detail/md5.hpp>
+#include <boost/algorithm/hex.hpp>
+
 #include <nlohmann/json.hpp>
 
 #include <stdexcept>
 #include <iostream>
-#include <array>
+
+using boost::uuids::detail::md5;
 
 /// @brief Запросы к MySQL базе данных
 namespace querries
@@ -142,7 +146,7 @@ void UsersTable::Delete(const int id)
     }
 }
 
-bool User::fromJson(const std::string &json)
+bool User::FromJson(const std::string &json)
 {
     const nlohmann::json object = nlohmann::json::parse(json);
 
@@ -187,7 +191,7 @@ bool User::fromJson(const std::string &json)
     return true;
 }
 
-bool User::toJson(std::string &json)
+std::string User::ToJson()
 {
     nlohmann::json object;
 
@@ -200,5 +204,32 @@ bool User::toJson(std::string &json)
     object[json_fields::city] = city;
     object[json_fields::password] = password;
 
-    return true;
+    return object.dump();
+}
+
+std::string User::Tokenize()
+{
+    static const std::string header = nlohmann::json{{"alg", "MD5"}, {"typ", "JWT"}}.dump();
+    const std::string payload = ToJson();
+    std::string signature;
+
+    {
+        md5 hash;
+        md5::digest_type digest;
+
+        hash.process_bytes(payload.data(), payload.size());
+        hash.get_digest(digest);
+
+        const auto intDigest = reinterpret_cast<const int *>(&digest);
+        boost::algorithm::hex(intDigest, intDigest + (sizeof(md5::digest_type) / sizeof(int)), std::back_inserter(signature));
+    }
+
+    std::string token;
+    token.reserve(header.size() + payload.size() + signature.size() + 2);
+
+    token = header + '.';
+    token += payload + '.';
+    token += signature;
+
+    return token;
 }
