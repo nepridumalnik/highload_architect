@@ -16,28 +16,13 @@ UsersController::UsersController(std::shared_ptr<soci::session> sql)
     subcontrollers_.push_back(std::make_unique<UserRegisterController>(usersTable_));
 }
 
-void UsersController::HandleRequest(const http::request<http::dynamic_body> &req,
+bool UsersController::HandleRequest(const std::string &route,
+                                    const http::request<http::dynamic_body> &req,
                                     websocket::response_type &res)
 {
-    const std::string route = req.target();
-
     for (auto &subcontroller : subcontrollers_)
     {
-        if (subcontroller->HasRoute(route))
-        {
-            subcontroller->HandleRequest(req, res);
-            return;
-        }
-    }
-
-    res.body() = "<h1>Unhandled route</h1>";
-}
-
-bool UsersController::HasRoute(const std::string &route)
-{
-    for (auto &subcontroller : subcontrollers_)
-    {
-        if (subcontroller->HasRoute(route))
+        if (subcontroller->HandleRequest(route, req, res))
         {
             return true;
         }

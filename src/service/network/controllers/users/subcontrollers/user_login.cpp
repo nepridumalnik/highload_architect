@@ -11,13 +11,16 @@ UserLoginController::UserLoginController(std::shared_ptr<UsersTable> usersTable)
 {
 }
 
-void UserLoginController::HandleRequest(const http::request<http::dynamic_body> &req,
-                                           websocket::response_type &res)
+bool UserLoginController::HandleRequest(const std::string &route,
+                                        const http::request<http::dynamic_body> &req,
+                                        websocket::response_type &res)
 {
-    res.body() = "<h1>Контроллер авторизации пользователей</h1>";
-}
+    if (route_ != route)
+    {
+        return false;
+    }
 
-bool UserLoginController::HasRoute(const std::string &route)
-{
-    return route_ == route;
+    res.body() = "<h1>Контроллер авторизации пользователей</h1>";
+
+    return true;
 }

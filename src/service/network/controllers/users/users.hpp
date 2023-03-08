@@ -22,11 +22,9 @@ public:
     UsersController(std::shared_ptr<soci::session> sql);
 
     /// @see AbstractController
-    void HandleRequest(const boost::beast::http::request<boost::beast::http::dynamic_body> &req,
+    bool HandleRequest(const std::string &route,
+    const boost::beast::http::request<boost::beast::http::dynamic_body> &req,
                        boost::beast::websocket::response_type &res) final;
-
-    /// @see AbstractController
-    bool HasRoute(const std::string &route) final;
 
 private:
     /// @brief Таблица с пользователями

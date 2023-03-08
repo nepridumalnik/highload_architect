@@ -16,12 +16,9 @@ public:
     UserLoginController(std::shared_ptr<UsersTable> usersTable);
 
     /// @see AbstractController
-    void HandleRequest(
-        const boost::beast::http::request<boost::beast::http::dynamic_body> &req,
-        boost::beast::websocket::response_type &res) final;
-
-    /// @see AbstractController
-    bool HasRoute(const std::string &route) final;
+    bool HandleRequest(const std::string &route,
+                       const boost::beast::http::request<boost::beast::http::dynamic_body> &req,
+                       boost::beast::websocket::response_type &res) final;
 
 private:
     /// @brief Таблица с пользователями

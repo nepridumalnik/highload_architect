@@ -11,13 +11,16 @@ UserRegisterController::UserRegisterController(std::shared_ptr<UsersTable> users
 {
 }
 
-void UserRegisterController::HandleRequest(const http::request<http::dynamic_body> &req,
+bool UserRegisterController::HandleRequest(const std::string &route,
+                                           const http::request<http::dynamic_body> &req,
                                            websocket::response_type &res)
 {
-    res.body() = "<h1>Контроллер регистрации пользователей</h1>";
-}
+    if (route_ != route)
+    {
+        return false;
+    }
 
-bool UserRegisterController::HasRoute(const std::string &route)
-{
-    return route_ == route;
+    res.body() = "<h1>Контроллер регистрации пользователей</h1>";
+
+    return true;
 }

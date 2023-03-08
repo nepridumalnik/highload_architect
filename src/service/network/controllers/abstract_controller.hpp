@@ -2,6 +2,8 @@
 
 #include <boost/beast.hpp>
 
+#include <string>
+
 /// @brief Интерфейс контроллера
 struct AbstractController
 {
@@ -9,14 +11,11 @@ struct AbstractController
     virtual ~AbstractController() = default;
 
     /// @brief Обработать соединение
+    /// @param route Маршрут
     /// @param req Запрос
     /// @param res Ответ
-    virtual void HandleRequest(
-        const boost::beast::http::request<boost::beast::http::dynamic_body> &req,
-        boost::beast::websocket::response_type &res) = 0;
-
-    /// @brief Проверить, обрабатываем ли маршрут
-    /// @param route Маршрут
-    /// @return True, если обрабатываем
-    virtual bool HasRoute(const std::string &route) = 0;
+    /// @return True, если запрос обработан
+    virtual bool HandleRequest(const std::string &route,
+                               const boost::beast::http::request<boost::beast::http::dynamic_body> &req,
+                               boost::beast::websocket::response_type &res) = 0;
 };

@@ -11,26 +11,24 @@ UserGetController::UserGetController(std::shared_ptr<UsersTable> usersTable)
 {
 }
 
-void UserGetController::HandleRequest(const http::request<http::dynamic_body> &req,
+bool UserGetController::HandleRequest(const std::string &route,
+                                      const http::request<http::dynamic_body> &req,
                                       websocket::response_type &res)
 {
-    res.body() = "<h1>Контроллер получения пользователей</h1>";
-}
-
-bool UserGetController::HasRoute(const std::string &route)
-{
-    if (route_.size() < route.size() && route.find(route_) == 0)
+    if (route_.size() >= route.size() || route.find(route_) != 0)
     {
-        for (auto it = route.back(); it != '/'; --it)
-        {
-            if (!std::isdigit(it))
-            {
-                return false;
-            }
-        }
-
-        return true;
+        return false;
     }
 
-    return false;
+    for (auto it = route.back(); it != '/'; --it)
+    {
+        if (!std::isdigit(it))
+        {
+            return false;
+        }
+    }
+
+    res.body() = "<h1>Контроллер получения пользователей</h1>";
+
+    return true;
 }
