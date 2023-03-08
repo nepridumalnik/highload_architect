@@ -220,7 +220,7 @@ std::string User::Tokenize()
         hash.process_bytes(payload.data(), payload.size());
         hash.get_digest(digest);
 
-        const auto intDigest = reinterpret_cast<const int *>(&digest);
+        const int *const intDigest = reinterpret_cast<const int *>(&digest);
         boost::algorithm::hex(intDigest, intDigest + (sizeof(md5::digest_type) / sizeof(int)), std::back_inserter(signature));
     }
 
