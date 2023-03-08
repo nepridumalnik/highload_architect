@@ -30,7 +30,7 @@ namespace querries
 } // namespace querries
 
 /// @brief Имена полей для JSON объекте
-namespace users_fields
+namespace json_fields
 {
     static const std::string id = "id";
     static const std::string first_name = "first_name";
@@ -40,7 +40,7 @@ namespace users_fields
     static const std::string interests = "interests";
     static const std::string city = "city";
     static const std::string password = "password";
-} // users_fields
+} // json_fields
 
 UsersTable::UsersTable(std::shared_ptr<soci::session> sql)
     : sql_{sql},
@@ -146,43 +146,43 @@ bool User::fromJson(const std::string &json)
 {
     const nlohmann::json object = nlohmann::json::parse(json);
 
-    if (!object.contains(users_fields::first_name) && !object[users_fields::first_name].is_string())
+    if (!object.contains(json_fields::first_name) && !object[json_fields::first_name].is_string())
     {
         return false;
     }
-    if (!object.contains(users_fields::second_name) && !object[users_fields::second_name].is_string())
+    if (!object.contains(json_fields::second_name) && !object[json_fields::second_name].is_string())
     {
         return false;
     }
-    if (!object.contains(users_fields::age) && !object[users_fields::age].is_number())
+    if (!object.contains(json_fields::age) && !object[json_fields::age].is_number())
     {
         return false;
     }
-    if (!object.contains(users_fields::male) && !object[users_fields::male].is_boolean())
+    if (!object.contains(json_fields::male) && !object[json_fields::male].is_boolean())
     {
         return false;
     }
-    if (!object.contains(users_fields::interests) && !object[users_fields::interests].is_string())
+    if (!object.contains(json_fields::interests) && !object[json_fields::interests].is_string())
     {
         return false;
     }
-    if (!object.contains(users_fields::city) && !object[users_fields::city].is_string())
+    if (!object.contains(json_fields::city) && !object[json_fields::city].is_string())
     {
         return false;
     }
-    if (!object.contains(users_fields::password) && !object[users_fields::password].is_string())
+    if (!object.contains(json_fields::password) && !object[json_fields::password].is_string())
     {
         return false;
     }
 
     id = 0;
-    name = object[users_fields::first_name].get<std::string>();
-    secondName = object[users_fields::second_name].get<std::string>();
-    age = object[users_fields::age].get<size_t>();
-    male = object[users_fields::male].get<bool>();
-    interests = object[users_fields::interests].get<std::string>();
-    city = object[users_fields::city].get<std::string>();
-    password = object[users_fields::password].get<std::string>();
+    name = object[json_fields::first_name].get<std::string>();
+    secondName = object[json_fields::second_name].get<std::string>();
+    age = object[json_fields::age].get<size_t>();
+    male = object[json_fields::male].get<bool>();
+    interests = object[json_fields::interests].get<std::string>();
+    city = object[json_fields::city].get<std::string>();
+    password = object[json_fields::password].get<std::string>();
 
     return true;
 }
@@ -191,14 +191,14 @@ bool User::toJson(std::string &json)
 {
     nlohmann::json object;
 
-    object[users_fields::id] = id;
-    object[users_fields::first_name] = name;
-    object[users_fields::second_name] = secondName;
-    object[users_fields::age] = age;
-    object[users_fields::male] = male;
-    object[users_fields::interests] = interests;
-    object[users_fields::city] = city;
-    object[users_fields::password] = password;
+    object[json_fields::id] = id;
+    object[json_fields::first_name] = name;
+    object[json_fields::second_name] = secondName;
+    object[json_fields::age] = age;
+    object[json_fields::male] = male;
+    object[json_fields::interests] = interests;
+    object[json_fields::city] = city;
+    object[json_fields::password] = password;
 
     return true;
 }
