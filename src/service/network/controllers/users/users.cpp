@@ -1,19 +1,15 @@
 #include <service/network/controllers/users/users.hpp>
 
+#include <service/network/controllers/users/subcontrollers/user_register.hpp>
+
 #include <service/database/models/users/users.hpp>
 
 using namespace boost::beast;
 
-const std::string UsersController::loginRoute = "/login";
-
-const std::string UsersController::userRegisterRoute = "/user/register";
-
-const std::string UsersController::userGetIdRoute = "/user/get/";
-
 UsersController::UsersController(std::shared_ptr<soci::session> sql)
 {
     usersTable_ = std::make_unique<UsersTable>(sql);
-    userRegister_ = std::make_unique<UserRegisterController>(usersTable_);
+    subcontrollers_.push_back(std::make_unique<UserRegisterController>(usersTable_));
 }
 
 void UsersController::HandleRequest(const http::request<http::dynamic_body> &req,
@@ -21,10 +17,13 @@ void UsersController::HandleRequest(const http::request<http::dynamic_body> &req
 {
     const std::string route = req.target();
 
-    if (route == userRegisterRoute)
+    for (auto &subcontroller : subcontrollers_)
     {
-        userRegister_->HandleRequest(req, res);
-        return;
+        if (subcontroller->HasRoute(route))
+        {
+            subcontroller->HandleRequest(req, res);
+            return;
+        }
     }
 
     res.body() = "<h1>Unhandled route</h1>";
@@ -32,27 +31,12 @@ void UsersController::HandleRequest(const http::request<http::dynamic_body> &req
 
 bool UsersController::HasRoute(const std::string &route)
 {
-    if (route == loginRoute)
+    for (auto &subcontroller : subcontrollers_)
     {
-        return true;
-    }
-
-    if (route == userRegisterRoute)
-    {
-        return true;
-    }
-
-    if (route.size() > userGetIdRoute.size() && route.find(userGetIdRoute) == 0)
-    {
-        for (auto it = route.back(); it != '/'; --it)
+        if (subcontroller->HasRoute(route))
         {
-            if (!std::isdigit(it))
-            {
-                return false;
-            }
+            return true;
         }
-
-        return true;
     }
 
     return false;

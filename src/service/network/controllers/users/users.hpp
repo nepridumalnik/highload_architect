@@ -2,11 +2,10 @@
 
 #include <service/network/controllers/abstract_controller.hpp>
 
-#include <service/network/controllers/users/subcontrollers/user_register.hpp>
-
 #include <boost/beast.hpp>
 
 #include <memory>
+#include <vector>
 
 class UsersTable;
 
@@ -33,15 +32,6 @@ private:
     /// @brief Таблица с пользователями
     std::shared_ptr<UsersTable> usersTable_;
 
-    /// @brief Путь до /login
-    static const std::string loginRoute;
-
-    /// @brief Путь до /user/register
-    static const std::string userRegisterRoute;
-
-    /// @brief Путь до /user/get/:id
-    static const std::string userGetIdRoute;
-
     /// @brief Контроллер регистрации пользователей
-    std::unique_ptr<UserRegisterController> userRegister_;
+    std::vector<std::unique_ptr<AbstractController>> subcontrollers_;
 };

@@ -8,19 +8,25 @@
 
 class UsersTable;
 
-/// @brief Контроллер регистрации пользователей
-class UserRegisterController : public AbstractHttpHandler
+/// @brief Контроллер регистрации пользователей с путём /user/register
+class UserRegisterController : public AbstractController
 {
 public:
     /// @brief Конструктор
     UserRegisterController(std::shared_ptr<UsersTable> usersTable);
 
-    /// @see AbstractHttpHandler
+    /// @see AbstractController
     void HandleRequest(
         const boost::beast::http::request<boost::beast::http::dynamic_body> &req,
         boost::beast::websocket::response_type &res) final;
 
+    /// @see AbstractController
+    bool HasRoute(const std::string &route) final;
+
 private:
     /// @brief Таблица с пользователями
     std::shared_ptr<UsersTable> usersTable_;
+
+    /// @brief Путь до /user/register
+    static const std::string userRegisterRoute_;
 };
