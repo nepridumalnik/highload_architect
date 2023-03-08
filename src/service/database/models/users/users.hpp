@@ -5,7 +5,6 @@
 #include <soci/statement.h>
 
 #include <memory>
-#include <string>
 
 namespace soci
 {
@@ -13,7 +12,7 @@ namespace soci
 } // namespace soci
 
 /// @brief Пользователь
-struct User
+struct User : public AbstractJsonStruct
 {
     /// @brief Идентификатор
     int id;
@@ -35,6 +34,15 @@ struct User
 
     /// @brief Город
     std::string city;
+
+    /// @brief Пароль
+    std::string password;
+
+    /// @see AbstractJsonStruct
+    bool fromJson(const std::string &json) final;
+
+    /// @see AbstractJsonStruct
+    bool toJson(std::string &json) final;
 };
 
 /// @brief Класс, управляющий таблицей с пользователями

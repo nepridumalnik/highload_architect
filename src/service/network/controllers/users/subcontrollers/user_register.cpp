@@ -2,6 +2,8 @@
 
 #include <service/database/models/users/users.hpp>
 
+#include <nlohmann/json.hpp>
+
 using namespace boost::beast;
 
 const std::string UserRegisterController::route_ = "/user/register";
@@ -20,7 +22,16 @@ bool UserRegisterController::HandleRequest(const std::string &route,
         return false;
     }
 
-    res.body() = "<h1>Контроллер регистрации пользователей</h1>";
+    const std::string body = buffers_to_string(req.body().data());
+
+    User user{};
+    if (!user.fromJson(body))
+    {
+        res.result(http::status::bad_request);
+        return true;
+    }
+
+    usersTable_->Insert(user);
 
     return true;
 }
