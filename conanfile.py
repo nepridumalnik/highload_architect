@@ -30,6 +30,7 @@ class HighloadServer(ConanFile):
         self.options["boost"].shared = True
 
     def requirements(self) -> None:
+        self.requires('nlohmann_json/3.11.2')
         self.requires('boost/1.81.0')
         self.requires('soci/4.0.3')
 
