@@ -28,7 +28,25 @@ bool UserGetController::HandleRequest(const std::string &route,
         }
     }
 
-    res.body() = "<h1>Контроллер получения пользователей</h1>";
+    if (http::verb::get != req.method())
+    {
+        res.result(http::status::bad_request);
+        return true;
+    }
+
+    const std::string substring = route.substr(route_.size() + 1);
+    const size_t id = std::stoull(substring);
+
+    User user{};
+    if (usersTable_->FindById(id, user))
+    {
+        res.body() = user.ToJson();
+    }
+    else
+    {
+        static const std::string emptyJson = "{}";
+        res.body() = emptyJson;
+    }
 
     return true;
 }

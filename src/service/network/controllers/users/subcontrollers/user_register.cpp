@@ -22,6 +22,12 @@ bool UserRegisterController::HandleRequest(const std::string &route,
         return false;
     }
 
+    if (http::verb::post != req.method())
+    {
+        res.result(http::status::bad_request);
+        return true;
+    }
+
     const std::string body = buffers_to_string(req.body().data());
 
     User user{};
