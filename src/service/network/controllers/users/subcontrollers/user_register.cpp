@@ -4,7 +4,7 @@
 
 using namespace boost::beast;
 
-const std::string UserRegisterController::userRegisterRoute_ = "/user/register";
+const std::string UserRegisterController::route_ = "/user/register";
 
 UserRegisterController::UserRegisterController(std::shared_ptr<UsersTable> usersTable)
     : usersTable_{usersTable}
@@ -19,5 +19,5 @@ void UserRegisterController::HandleRequest(const http::request<http::dynamic_bod
 
 bool UserRegisterController::HasRoute(const std::string &route)
 {
-    return userRegisterRoute_ == route;
+    return route_ == route;
 }

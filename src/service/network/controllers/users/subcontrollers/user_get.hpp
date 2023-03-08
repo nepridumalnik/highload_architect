@@ -8,12 +8,12 @@
 
 class UsersTable;
 
-/// @brief Контроллер регистрации пользователей с путём /user/register
-class UserRegisterController : public AbstractController
+/// @brief Контроллер получения пользователей с путём /user/get/:id
+class UserGetController : public AbstractController
 {
 public:
     /// @brief Конструктор
-    UserRegisterController(std::shared_ptr<UsersTable> usersTable);
+    UserGetController(std::shared_ptr<UsersTable> usersTable);
 
     /// @see AbstractController
     void HandleRequest(

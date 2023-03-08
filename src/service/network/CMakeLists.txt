@@ -5,6 +5,8 @@ set(SOURCE
     router.cpp
 
     controllers/users/users.cpp
+    controllers/users/subcontrollers/user_get.cpp
+    controllers/users/subcontrollers/user_login.cpp
     controllers/users/subcontrollers/user_register.cpp
 )
 
