@@ -14,7 +14,7 @@ class Connection
 {
 public:
     /// @brief Конструктор
-    Connection(const size_t port, callback cb);
+    Connection(const uint16_t port, callback cb);
 
     /// @brief Получение соединений
     void operator()();

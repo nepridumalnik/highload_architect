@@ -3,7 +3,7 @@
 #include <iostream>
 #include <thread>
 
-Connection::Connection(const size_t port, callback cb)
+Connection::Connection(const uint16_t port, callback cb)
     : context_{}, endpoint_{boost::asio::ip::tcp::v4(), port}, acceptor_{context_, endpoint_}, cb_{cb}
 {
 }

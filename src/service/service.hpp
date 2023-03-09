@@ -1,5 +1,7 @@
 #pragma once
 
+#include <helpers/macro.hpp>
+
 #include <service/network/router.hpp>
 
 #include <memory>
@@ -14,10 +16,10 @@ class Service
 {
 public:
     /// @brief Конструктор
-    Service();
+    EXPORT Service();
 
     /// @brief Запуск службы
-    void Run();
+    EXPORT void Run();
 
 private:
     /// @brief База данных

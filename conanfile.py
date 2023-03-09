@@ -49,6 +49,7 @@ class HighloadServer(ConanFile):
 
         for library in libraries:
             self.copy(library, dst='bin', src='bin', keep_path=False)
+            self.copy(library, dst='lib', src='lib', keep_path=False)
 
     def package(self) -> None:
         self.copy('*.h', dst='include', src='include')

@@ -10,4 +10,4 @@ set(SOURCE
     controllers/users/subcontrollers/user_register.cpp
 )
 
-add_library(${TARGET} ${SOURCE})
+add_library(${TARGET} STATIC ${SOURCE})
