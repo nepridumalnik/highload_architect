@@ -8,11 +8,9 @@ set(SOURCE
 )
 
 set(LIBRARIES
-    /usr/lib/x86_64-linux-gnu/libsoci_mysql.so
-    /usr/lib/x86_64-linux-gnu/libsoci_core.so
-
     database
     network
+    ${SOCI_LIBS}
 )
 
 add_library(${TARGET} SHARED ${SOURCE})

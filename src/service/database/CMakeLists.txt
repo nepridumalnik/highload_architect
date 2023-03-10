@@ -5,8 +5,15 @@ set(SOURCE
 )
 
 set(LIBRARIES
-    ${CONAN_LIBS}
+    boost_thread
+    ${SOCI_LIBS}
 )
+
+if(UNIX)
+    list(APPEND LIBRARIES
+        pthread
+    )
+endif(UNIX)
 
 add_library(${TARGET} STATIC ${SOURCE})
 target_link_libraries(${TARGET} PUBLIC ${LIBRARIES})
