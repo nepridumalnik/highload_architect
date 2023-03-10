@@ -5,8 +5,8 @@ set(SOURCE
 )
 
 set(LIBRARIES
-    ${CONAN_LIBS_SOCI}
+    ${CONAN_LIBS}
 )
 
 add_library(${TARGET} STATIC ${SOURCE})
-target_link_libraries(${TARGET} PRIVATE ${LIBRARIES})
+target_link_libraries(${TARGET} PUBLIC ${LIBRARIES})
