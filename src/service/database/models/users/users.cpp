@@ -97,7 +97,7 @@ void UsersTable::Insert(const User &user)
     }
 }
 
-bool UsersTable::FindById(int id, User &user)
+bool UsersTable::FindById(const size_t id, User &user)
 {
     try
     {
@@ -125,7 +125,7 @@ bool UsersTable::FindById(int id, User &user)
     }
 }
 
-void UsersTable::Delete(const int id)
+void UsersTable::Delete(const size_t id)
 {
     try
     {

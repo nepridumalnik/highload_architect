@@ -16,4 +16,4 @@ if(UNIX)
 endif(UNIX)
 
 add_library(${TARGET} STATIC ${SOURCE})
-target_link_libraries(${TARGET} PUBLIC ${LIBRARIES})
+target_link_libraries(${TARGET} PRIVATE ${LIBRARIES})

@@ -14,4 +14,4 @@ set(LIBRARIES
 )
 
 add_library(${TARGET} SHARED ${SOURCE})
-target_link_libraries(${TARGET} PUBLIC ${LIBRARIES})
+target_link_libraries(${TARGET} PRIVATE ${LIBRARIES})

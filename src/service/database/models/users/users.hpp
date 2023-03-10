@@ -61,10 +61,10 @@ public:
     virtual void Insert(const User &user) final;
 
     /// @see AbstractTableModel
-    virtual bool FindById(const int id, User &user) final;
+    virtual bool FindById(const size_t id, User &user) final;
 
     /// @see AbstractTableModel
-    void Delete(const int id) final;
+    void Delete(const size_t id) final;
 
 private:
     /// @brief База данных
