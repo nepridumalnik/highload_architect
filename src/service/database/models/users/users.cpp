@@ -18,7 +18,8 @@ namespace querries
                                            "Interests TEXT NOT NULL,\n"
                                            "City VARCHAR(50) NOT NULL,\n"
                                            "Password VARCHAR(50) NOT NULL,\n"
-                                           "Email VARCHAR(50) NOT NULL UNIQUE\n"
+                                           "Email VARCHAR(50) NOT NULL UNIQUE,\n"
+                                           "INDEX (Name, Email)\n"
                                            ") ENGINE=InnoDB CHARSET=utf8";
     static const std::string InsertUser = "INSERT INTO Users(Name, SecondName, Age, Male, Interests, City, Password, Email) "
                                           "VALUES(:Name, :SecondName, :Age, :Male, :Interests, :City, :Password, :Email)";

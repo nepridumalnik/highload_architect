@@ -84,16 +84,19 @@ std::string UserRow::Tokenize() const
     token += payload + '.';
     token += signature;
 
-    return token;
+    return HashMD5(token);
 }
 
 bool UserRow::Validate() const
 {
-    for (const auto &str : {std::ref(name), std::ref(secondName),
-                            std::ref(interests), std::ref(city),
+    static const size_t maxVCharLen = 50;
+
+    for (const auto &str : {std::ref(name), std::ref(secondName), std::ref(city),
                             std::ref(password), std::ref(email)})
     {
-        if (str.get().empty())
+        const auto &ref = str.get();
+
+        if (ref.empty() || ref.size() > maxVCharLen)
         {
             return false;
         }
