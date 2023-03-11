@@ -3,6 +3,7 @@
 #include <service/database/models/abstract_table_model.hpp>
 
 #include <service/database/models/users/user_row.hpp>
+#include <service/database/models/users/user_find_condition.hpp>
 
 #include <soci/statement.h>
 
@@ -14,7 +15,7 @@ namespace soci
 } // namespace soci
 
 /// @brief Класс, управляющий таблицей с пользователями
-class UsersTable : AbstractTableModel<UserRow>
+class UsersTable : AbstractTableModel<UserRow, UserRowCond>
 {
 public:
     /// @brief Конструктор
@@ -22,10 +23,13 @@ public:
     explicit UsersTable(std::shared_ptr<soci::session> sql);
 
     /// @see AbstractTableModel
-    virtual bool Insert(const UserRow &user) final;
+    bool Insert(const UserRow &user) final;
 
     /// @see AbstractTableModel
-    virtual bool FindById(const size_t id, UserRow &user) final;
+    bool FindById(const size_t id, UserRow &user) final;
+
+    /// @see AbstractTableModel
+    bool FindByCondition(const UserRowCond &condition, UserRow &row) final;
 
     /// @see AbstractTableModel
     bool Delete(const size_t id) final;
@@ -38,7 +42,7 @@ private:
     soci::statement insert_;
 
     /// @brief Запрос по выбору одного пользователя
-    soci::statement select_;
+    soci::statement selectById_;
 
     /// @brief Запрос по удалению пользователя
     soci::statement delete_;

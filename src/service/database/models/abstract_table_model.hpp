@@ -4,7 +4,8 @@
 
 /// @brief Интерфейс модели
 /// @tparam T тип структуры
-template <typename T>
+/// @tparam F структура для поиска
+template <typename T, typename F>
 struct AbstractTableModel
 {
     /// @brief Виртуальный деструктор
@@ -17,9 +18,16 @@ struct AbstractTableModel
 
     /// @brief Найти строку по идентификатору
     /// @param id Идентификатор
-    /// @param Строка
+    /// @param row Структура строки
     /// @return True, если удачно
     virtual bool FindById(const size_t id, T &row) = 0;
+
+    /// @brief Найти строку по структуре для поиска
+    /// @param f Структура для поиска
+    /// @param row Строка
+    /// @return True, если удачно
+    /// @details Поиск рекомендуется производить по уникальным полям
+    virtual bool FindByCondition(const F &f, T &row) = 0;
 
     /// @brief Удалить пользователя по идентификатору
     /// @param id Идентификатор

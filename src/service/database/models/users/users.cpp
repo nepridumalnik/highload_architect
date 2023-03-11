@@ -22,15 +22,15 @@ namespace querries
                                            ") ENGINE=InnoDB";
     static const std::string InsertUser = "INSERT INTO Users(Name, SecondName, Age, Male, Interests, City, Password, Email) "
                                           "VALUES(:Name, :SecondName, :Age, :Male, :Interests, :City, :Password, :Email)";
-    static const std::string SelectUser = "SELECT ID, Name, SecondName, Age, Male, Interests, City, Password, Email "
-                                          "FROM Users WHERE ID = :ID";
+    static const std::string SelectUserById = "SELECT ID, Name, SecondName, Age, Male, Interests, City, Password, Email "
+                                              "FROM Users WHERE ID = :ID";
     static const std::string DeleteUser = "DELETE FROM Users WHERE ID = :ID";
 } // namespace querries
 
 UsersTable::UsersTable(std::shared_ptr<soci::session> sql)
     : sql_{sql},
       insert_{*sql_},
-      select_{*sql_},
+      selectById_{*sql_},
       delete_{*sql_}
 {
     try
@@ -41,7 +41,7 @@ UsersTable::UsersTable(std::shared_ptr<soci::session> sql)
 
         // Компиляция команд
         insert_.prepare(querries::InsertUser);
-        select_.prepare(querries::SelectUser);
+        selectById_.prepare(querries::SelectUserById);
         delete_.prepare(querries::DeleteUser);
     }
     catch (const std::exception &e)
@@ -91,21 +91,21 @@ bool UsersTable::FindById(const size_t id, UserRow &user)
 {
     try
     {
-        select_.exchange(soci::use(id));
+        selectById_.exchange(soci::use(id));
 
-        select_.exchange(soci::into(user.id));
-        select_.exchange(soci::into(user.name));
-        select_.exchange(soci::into(user.secondName));
-        select_.exchange(soci::into(user.age));
-        select_.exchange(soci::into(*reinterpret_cast<int *>(&user.male)));
-        select_.exchange(soci::into(user.interests));
-        select_.exchange(soci::into(user.city));
-        select_.exchange(soci::into(user.password));
-        select_.exchange(soci::into(user.email));
+        selectById_.exchange(soci::into(user.id));
+        selectById_.exchange(soci::into(user.name));
+        selectById_.exchange(soci::into(user.secondName));
+        selectById_.exchange(soci::into(user.age));
+        selectById_.exchange(soci::into(*reinterpret_cast<int *>(&user.male)));
+        selectById_.exchange(soci::into(user.interests));
+        selectById_.exchange(soci::into(user.city));
+        selectById_.exchange(soci::into(user.password));
+        selectById_.exchange(soci::into(user.email));
 
-        select_.define_and_bind();
-        const bool result = select_.execute(true);
-        select_.bind_clean_up();
+        selectById_.define_and_bind();
+        const bool result = selectById_.execute(true);
+        selectById_.bind_clean_up();
 
         return result;
     }
@@ -138,4 +138,9 @@ bool UsersTable::Delete(const size_t id)
     }
 
     return false;
+}
+
+bool UsersTable::FindByCondition(const UserRowCond &condition, UserRow &row)
+{
+    return true;
 }
