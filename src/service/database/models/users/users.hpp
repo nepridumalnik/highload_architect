@@ -29,7 +29,7 @@ public:
     bool FindById(const size_t id, UserRow &user) final;
 
     /// @see AbstractTableModel
-    bool FindByCondition(const UserRowCond &condition, UserRow &row) final;
+    bool FindByCondition(const UserRowCond &condition, UserRow &user) final;
 
     /// @see AbstractTableModel
     bool Delete(const size_t id) final;
@@ -41,8 +41,11 @@ private:
     /// @brief Запрос по добавлению пользователя
     soci::statement insert_;
 
-    /// @brief Запрос по выбору одного пользователя
+    /// @brief Запрос по выбору пользователя по идентификатору
     soci::statement selectById_;
+
+    /// @brief Запрос по выбору пользователя по паролю и почте
+    soci::statement selectByCondition_;
 
     /// @brief Запрос по удалению пользователя
     soci::statement delete_;
