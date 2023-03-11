@@ -73,8 +73,9 @@ std::string UserRow::ToJson() const
 
 std::string UserRow::Tokenize() const
 {
+    // Задел на будущее, чтобы пока Base64 не тащить
     static const std::string header = nlohmann::json{{"alg", "MD5"}, {"typ", "JWT"}}.dump();
-    const std::string payload = nlohmann::json{{json_fields::password, password}, {json_fields::password, "JWT"}}.dump();
+    const std::string payload = nlohmann::json{{json_fields::password, password}, {json_fields::email, email}}.dump();
     const std::string signature = HashMD5(payload);
 
     std::string token;
