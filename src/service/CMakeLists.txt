@@ -5,6 +5,7 @@ set(TARGET service)
 
 set(SOURCE
     service.cpp
+    utils/utils.cpp
 )
 
 set(LIBRARIES

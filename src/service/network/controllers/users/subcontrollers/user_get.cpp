@@ -37,7 +37,7 @@ bool UserGetController::HandleRequest(const std::string &route,
     const std::string substring = route.substr(route_.size() + 1);
     const size_t id = std::stoull(substring);
 
-    User user{};
+    UserRow user{};
     if (usersTable_->FindById(id, user))
     {
         res.body() = user.ToJson();

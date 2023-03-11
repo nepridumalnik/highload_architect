@@ -2,6 +2,8 @@
 
 #include <service/database/models/abstract_table_model.hpp>
 
+#include <service/database/models/users/user_row.hpp>
+
 #include <soci/statement.h>
 
 #include <memory>
@@ -11,46 +13,8 @@ namespace soci
     class session;
 } // namespace soci
 
-/// @brief Пользователь
-struct User : public AbstractJsonStruct
-{
-    /// @brief Идентификатор
-    int id;
-
-    /// @brief Имя
-    std::string name;
-
-    /// @brief Фамилия
-    std::string secondName;
-
-    /// @brief Возраст
-    size_t age;
-
-    /// @brief Пол: true мужчина, иначе женщина
-    bool male;
-
-    /// @brief Интересы
-    std::string interests;
-
-    /// @brief Город
-    std::string city;
-
-    /// @brief Пароль
-    std::string password;
-
-    /// @see AbstractJsonStruct
-    bool FromJson(const std::string &json) final;
-
-    /// @see AbstractJsonStruct
-    std::string ToJson() final;
-
-    /// @brief Получить токен
-    /// @return Токен
-    std::string Tokenize();
-};
-
 /// @brief Класс, управляющий таблицей с пользователями
-class UsersTable : AbstractTableModel<User>
+class UsersTable : AbstractTableModel<UserRow>
 {
 public:
     /// @brief Конструктор
@@ -58,10 +22,10 @@ public:
     explicit UsersTable(std::shared_ptr<soci::session> sql);
 
     /// @see AbstractTableModel
-    virtual void Insert(const User &user) final;
+    virtual void Insert(const UserRow &user) final;
 
     /// @see AbstractTableModel
-    virtual bool FindById(const size_t id, User &user) final;
+    virtual bool FindById(const size_t id, UserRow &user) final;
 
     /// @see AbstractTableModel
     void Delete(const size_t id) final;

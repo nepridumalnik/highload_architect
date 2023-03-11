@@ -30,7 +30,7 @@ bool UserRegisterController::HandleRequest(const std::string &route,
 
     const std::string body = buffers_to_string(req.body().data());
 
-    User user{};
+    UserRow user{};
     if (!user.FromJson(body))
     {
         res.result(http::status::bad_request);

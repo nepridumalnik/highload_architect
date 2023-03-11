@@ -2,6 +2,7 @@ set(TARGET database)
 
 set(SOURCE
     models/users/users.cpp
+    models/users/user_row.cpp
 )
 
 set(LIBRARIES
