@@ -2,7 +2,7 @@
 
 #include <service/database/models/abstract_table_model.hpp>
 
-#include <service/database/models/users/user_row.hpp>
+#include <service/database/models/users/user_auth_row.hpp>
 #include <service/database/models/users/user_find_condition.hpp>
 
 #include <soci/statement.h>
@@ -14,22 +14,22 @@ namespace soci
     class session;
 } // namespace soci
 
-/// @brief Класс, управляющий таблицей с пользователями
-class UsersTable : public AbstractTableModel<UserRow, UserRowCond>
+/// @brief Класс, управляющий таблицей с авторизациями пользователей
+class UsersAuthTable : public AbstractTableModel<UserAuthRow, UserRowCond>
 {
 public:
     /// @brief Конструктор
     /// @param sql База данных
-    explicit UsersTable(std::shared_ptr<soci::session> sql);
+    explicit UsersAuthTable(std::shared_ptr<soci::session> sql);
 
     /// @see AbstractTableModel
-    bool Insert(const UserRow &user) final;
+    bool Insert(const UserAuthRow &auth) final;
 
     /// @see AbstractTableModel
-    bool FindById(const size_t id, UserRow &user) final;
+    bool FindById(const size_t id, UserAuthRow &auth) final;
 
     /// @see AbstractTableModel
-    bool FindByCondition(const UserRowCond &condition, UserRow &user) final;
+    bool FindByCondition(const UserRowCond &condition, UserAuthRow &auth) final;
 
     /// @see AbstractTableModel
     bool Delete(const size_t id) final;

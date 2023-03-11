@@ -1,6 +1,7 @@
 #include <service/network/controllers/users/subcontrollers/user_register.hpp>
 
 #include <service/database/models/users/users.hpp>
+#include <service/database/models/users/users_auth.hpp>
 
 #include <nlohmann/json.hpp>
 
@@ -8,8 +9,10 @@ using namespace boost::beast;
 
 const std::string UserRegisterController::route_ = "/user/register";
 
-UserRegisterController::UserRegisterController(std::shared_ptr<UsersTable> usersTable)
-    : usersTable_{usersTable}
+UserRegisterController::UserRegisterController(std::shared_ptr<UsersTable> usersTable,
+                                               std::shared_ptr<UsersAuthTable> authTable)
+    : usersTable_{usersTable},
+      authTable_{authTable}
 {
 }
 

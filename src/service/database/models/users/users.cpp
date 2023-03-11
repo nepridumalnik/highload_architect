@@ -119,8 +119,9 @@ bool UsersTable::FindById(const size_t id, UserRow &user)
     catch (const std::exception &e)
     {
         std::cerr << e.what() << std::endl;
-        throw;
     }
+
+    return false;
 }
 
 bool UsersTable::Delete(const size_t id)

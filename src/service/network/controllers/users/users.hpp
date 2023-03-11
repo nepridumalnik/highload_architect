@@ -8,6 +8,7 @@
 #include <vector>
 
 class UsersTable;
+class UsersAuthTable;
 
 namespace soci
 {
@@ -23,12 +24,15 @@ public:
 
     /// @see AbstractController
     bool HandleRequest(const std::string &route,
-    const boost::beast::http::request<boost::beast::http::dynamic_body> &req,
+                       const boost::beast::http::request<boost::beast::http::dynamic_body> &req,
                        boost::beast::websocket::response_type &res) final;
 
 private:
     /// @brief Таблица с пользователями
     std::shared_ptr<UsersTable> usersTable_;
+
+    /// @brief Таблица с пользователями
+    std::shared_ptr<UsersAuthTable> authTable_;
 
     /// @brief Контроллер регистрации пользователей
     std::vector<std::unique_ptr<AbstractController>> subcontrollers_;

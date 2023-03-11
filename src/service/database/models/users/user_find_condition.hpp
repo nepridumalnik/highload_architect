@@ -2,6 +2,7 @@
 
 #include <string>
 
+/// @brief Условие поиска пользователя
 struct UserRowCond
 {
     /// @brief Пароль

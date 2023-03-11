@@ -3,6 +3,8 @@ set(TARGET database)
 set(SOURCE
     models/users/users.cpp
     models/users/user_row.cpp
+    models/users/users_auth.cpp
+    models/users/user_auth_row.cpp
 )
 
 set(LIBRARIES

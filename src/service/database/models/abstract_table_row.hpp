@@ -14,10 +14,6 @@ struct AbstractTableRow
     /// @return JSON объект
     virtual std::string ToJson() const = 0;
 
-    /// @brief Получить токен
-    /// @return Токен
-    virtual std::string Tokenize() const = 0;
-
     /// @brief Валидация структуры
     /// @return True, если всё хорошо
     virtual bool Validate() const = 0;

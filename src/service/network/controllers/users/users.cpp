@@ -5,15 +5,18 @@
 #include <service/network/controllers/users/subcontrollers/user_register.hpp>
 
 #include <service/database/models/users/users.hpp>
+#include <service/database/models/users/users_auth.hpp>
 
 using namespace boost::beast;
 
 UsersController::UsersController(std::shared_ptr<soci::session> sql)
 {
-    usersTable_ = std::make_unique<UsersTable>(sql);
+    usersTable_ = std::make_shared<UsersTable>(sql);
+    authTable_ = std::make_shared<UsersAuthTable>(sql);
+
     subcontrollers_.push_back(std::make_unique<UserGetController>(usersTable_));
     subcontrollers_.push_back(std::make_unique<UserLoginController>(usersTable_));
-    subcontrollers_.push_back(std::make_unique<UserRegisterController>(usersTable_));
+    subcontrollers_.push_back(std::make_unique<UserRegisterController>(usersTable_, authTable_));
 }
 
 bool UsersController::HandleRequest(const std::string &route,
