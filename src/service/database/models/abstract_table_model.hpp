@@ -12,7 +12,8 @@ struct AbstractTableModel
 
     /// @brief Вставить строку
     /// @param Строка
-    virtual void Insert(const T &row) = 0;
+    /// @return True, если удачно
+    virtual bool Insert(const T &row) = 0;
 
     /// @brief Найти строку по идентификатору
     /// @param id Идентификатор
@@ -22,5 +23,6 @@ struct AbstractTableModel
 
     /// @brief Удалить пользователя по идентификатору
     /// @param id Идентификатор
-    virtual void Delete(const size_t id) = 0;
+    /// @return True, если удачно
+    virtual bool Delete(const size_t id) = 0;
 };

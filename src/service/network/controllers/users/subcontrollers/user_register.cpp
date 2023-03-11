@@ -25,19 +25,17 @@ bool UserRegisterController::HandleRequest(const std::string &route,
     if (http::verb::post != req.method())
     {
         res.result(http::status::bad_request);
-        return true;
     }
-
-    const std::string body = buffers_to_string(req.body().data());
-
-    UserRow user{};
-    if (!user.FromJson(body))
+    else
     {
-        res.result(http::status::bad_request);
-        return true;
-    }
+        const std::string body = buffers_to_string(req.body().data());
 
-    usersTable_->Insert(user);
+        UserRow user{};
+        if (!user.FromJson(body) || !usersTable_->Insert(user))
+        {
+            res.result(http::status::bad_request);
+        }
+    }
 
     return true;
 }

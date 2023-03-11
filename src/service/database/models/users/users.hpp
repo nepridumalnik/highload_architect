@@ -22,13 +22,13 @@ public:
     explicit UsersTable(std::shared_ptr<soci::session> sql);
 
     /// @see AbstractTableModel
-    virtual void Insert(const UserRow &user) final;
+    virtual bool Insert(const UserRow &user) final;
 
     /// @see AbstractTableModel
     virtual bool FindById(const size_t id, UserRow &user) final;
 
     /// @see AbstractTableModel
-    void Delete(const size_t id) final;
+    bool Delete(const size_t id) final;
 
 private:
     /// @brief База данных

@@ -18,7 +18,7 @@ namespace querries
                                            "Interests TEXT NOT NULL,\n"
                                            "City VARCHAR(50) NOT NULL,\n"
                                            "Password VARCHAR(50) NOT NULL,\n"
-                                           "Email VARCHAR(50) NOT NULL\n"
+                                           "Email VARCHAR(50) NOT NULL UNIQUE\n"
                                            ") ENGINE=InnoDB";
     static const std::string InsertUser = "INSERT INTO Users(Name, SecondName, Age, Male, Interests, City, Password, Email) "
                                           "VALUES(:Name, :SecondName, :Age, :Male, :Interests, :City, :Password, :Email)";
@@ -51,13 +51,13 @@ UsersTable::UsersTable(std::shared_ptr<soci::session> sql)
     }
 }
 
-void UsersTable::Insert(const UserRow &user)
+bool UsersTable::Insert(const UserRow &user)
 {
     try
     {
         if (!user.Validate())
         {
-            return;
+            return false;
         }
 
         soci::transaction transaction{*sql_};
@@ -76,12 +76,15 @@ void UsersTable::Insert(const UserRow &user)
         insert_.bind_clean_up();
 
         transaction.commit();
+
+        return true;
     }
     catch (const std::exception &e)
     {
         std::cerr << e.what() << std::endl;
-        throw;
     }
+
+    return false;
 }
 
 bool UsersTable::FindById(const size_t id, UserRow &user)
@@ -113,7 +116,7 @@ bool UsersTable::FindById(const size_t id, UserRow &user)
     }
 }
 
-void UsersTable::Delete(const size_t id)
+bool UsersTable::Delete(const size_t id)
 {
     try
     {
@@ -126,10 +129,13 @@ void UsersTable::Delete(const size_t id)
         delete_.bind_clean_up();
 
         transaction.commit();
+
+        return true;
     }
     catch (const std::exception &e)
     {
         std::cerr << e.what() << std::endl;
-        throw;
     }
+
+    return false;
 }
