@@ -19,7 +19,7 @@ namespace querries
                                            "City VARCHAR(50) NOT NULL,\n"
                                            "Password VARCHAR(50) NOT NULL,\n"
                                            "Email VARCHAR(50) NOT NULL UNIQUE\n"
-                                           ") ENGINE=InnoDB";
+                                           ") ENGINE=InnoDB CHARSET=utf8";
     static const std::string InsertUser = "INSERT INTO Users(Name, SecondName, Age, Male, Interests, City, Password, Email) "
                                           "VALUES(:Name, :SecondName, :Age, :Male, :Interests, :City, :Password, :Email)";
     static const std::string SelectUserById = "SELECT DISTINCT ID, Name, SecondName, Age, Male, Interests, City, Password, Email "
