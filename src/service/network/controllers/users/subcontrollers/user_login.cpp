@@ -6,13 +6,16 @@ using namespace boost::beast;
 
 const std::string UserLoginController::route_ = "/login";
 
-UserLoginController::UserLoginController(std::shared_ptr<UsersTable> usersTable)
-    : usersTable_{usersTable}
+UserLoginController::UserLoginController(std::shared_ptr<UsersTable> usersTable,
+                                         std::shared_ptr<UsersAuthTable> authTable)
+    : usersTable_{usersTable},
+      authTable_{authTable}
 {
 }
 
 bool UserLoginController::HandleRequest(const std::string &route,
-                                        const http::request<http::dynamic_body> &req, websocket::response_type &res)
+                                        const http::request<http::dynamic_body> &req,
+                                        websocket::response_type &res)
 {
     if (route_ != route)
     {
@@ -41,14 +44,17 @@ bool UserLoginController::HandleRequest(const std::string &route,
     return true;
 }
 
-void UserLoginController::login(const http::request<http::dynamic_body> &req, websocket::response_type &res)
+void UserLoginController::login(const http::request<http::dynamic_body> &req,
+                                websocket::response_type &res)
 {
 }
 
-void UserLoginController::unauthorize(const http::request<http::dynamic_body> &req, boost::beast::websocket::response_type &res)
+void UserLoginController::unauthorize(const http::request<http::dynamic_body> &req,
+                                      boost::beast::websocket::response_type &res)
 {
 }
 
-void UserLoginController::authenticate(const http::request<http::dynamic_body> &req, websocket::response_type &res)
+void UserLoginController::authenticate(const http::request<http::dynamic_body> &req,
+                                       websocket::response_type &res)
 {
 }

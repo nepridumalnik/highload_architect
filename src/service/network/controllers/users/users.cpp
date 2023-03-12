@@ -15,8 +15,8 @@ UsersController::UsersController(std::shared_ptr<soci::session> sql)
     authTable_ = std::make_shared<UsersAuthTable>(usersTable_);
 
     subcontrollers_.push_back(std::make_unique<UserGetController>(usersTable_));
-    subcontrollers_.push_back(std::make_unique<UserLoginController>(usersTable_));
-    subcontrollers_.push_back(std::make_unique<UserRegisterController>(usersTable_, authTable_));
+    subcontrollers_.push_back(std::make_unique<UserRegisterController>(usersTable_));
+    subcontrollers_.push_back(std::make_unique<UserLoginController>(usersTable_, authTable_));
 }
 
 bool UsersController::HandleRequest(const std::string &route,

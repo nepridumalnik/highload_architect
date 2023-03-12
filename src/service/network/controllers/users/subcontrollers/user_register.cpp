@@ -9,10 +9,8 @@ using namespace boost::beast;
 
 const std::string UserRegisterController::route_ = "/user/register";
 
-UserRegisterController::UserRegisterController(std::shared_ptr<UsersTable> usersTable,
-                                               std::shared_ptr<UsersAuthTable> authTable)
-    : usersTable_{usersTable},
-      authTable_{authTable}
+UserRegisterController::UserRegisterController(std::shared_ptr<UsersTable> usersTable)
+    : usersTable_{usersTable}
 {
 }
 

@@ -7,6 +7,7 @@
 #include <memory>
 
 class UsersTable;
+class UsersAuthTable;
 
 /// @brief Контроллер авторизации пользователей с путём /login
 class UserLoginController : public AbstractController
@@ -14,7 +15,9 @@ class UserLoginController : public AbstractController
 public:
     /// @brief Конструктор
     /// @param usersTable Таблица пользователей
-    UserLoginController(std::shared_ptr<UsersTable> usersTable);
+    /// @param authTable Таблица авторизаций
+    UserLoginController(std::shared_ptr<UsersTable> usersTable,
+                        std::shared_ptr<UsersAuthTable> authTable);
 
     /// @see AbstractController
     bool HandleRequest(const std::string &route,
@@ -43,6 +46,9 @@ private:
 private:
     /// @brief Таблица с пользователями
     std::shared_ptr<UsersTable> usersTable_;
+
+    /// @brief Таблица авторизаций
+    std::shared_ptr<UsersAuthTable> authTable_;
 
     /// @brief Путь до /user/register
     static const std::string route_;
