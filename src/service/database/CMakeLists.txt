@@ -5,6 +5,7 @@ set(SOURCE
     models/users/user_row.cpp
     models/users/users_auth.cpp
     models/users/user_auth_row.cpp
+    models/users/user_find_condition.cpp
 )
 
 set(LIBRARIES

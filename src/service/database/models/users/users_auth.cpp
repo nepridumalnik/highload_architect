@@ -19,7 +19,7 @@ namespace querries
                                            "INDEX (ID)\n"
                                            ") ENGINE=InnoDB CHARSET=utf8;";
     static const std::string InsertUser = "INSERT INTO Tokens(ID, Token) "
-                                          "VALUES(:ID, :Password, :Email, :Token)";
+                                          "VALUES(:ID, :Token)";
     static const std::string SelectUserById = "SELECT DISTINCT ID, Token "
                                               "FROM Tokens WHERE ID = :ID";
     static const std::string SelectUserByCondition = "SELECT DISTINCT ID, Token "

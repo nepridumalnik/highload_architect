@@ -38,10 +38,10 @@ struct UserRow : public AbstractTableRow
     /// @see AbstractTableRow
     std::string ToJson() const final;
 
+    /// @see AbstractTableRow
+    bool Validate() const final;
+
     /// @brief Получить токен
     /// @return Токен
     std::string Tokenize() const;
-
-    /// @see AbstractTableRow
-    bool Validate() const final;
 };
