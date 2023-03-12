@@ -5,15 +5,15 @@
 /// @brief Имена полей для JSON объекте
 namespace json_fields
 {
-    static const std::string password = "password";
-    static const std::string email = "email";
+    static const std::string Password = "password";
+    static const std::string Email = "email";
 } // json_fields
 
 bool UserRowCond::FromJson(const std::string &json)
 {
     const nlohmann::json object = nlohmann::json::parse(json);
 
-    for (const auto &field : {std::ref(json_fields::password), std::ref(json_fields::email)})
+    for (const auto &field : {std::ref(json_fields::Password), std::ref(json_fields::Email)})
     {
         if (!object.contains(field) && !object[field].is_string())
         {
@@ -21,8 +21,8 @@ bool UserRowCond::FromJson(const std::string &json)
         }
     }
 
-    password = object[json_fields::password].get<std::string>();
-    email = object[json_fields::email].get<std::string>();
+    password = object[json_fields::Password].get<std::string>();
+    email = object[json_fields::Email].get<std::string>();
 
     return true;
 }
@@ -31,8 +31,8 @@ std::string UserRowCond::ToJson() const
 {
     nlohmann::json object;
 
-    object[json_fields::password] = password;
-    object[json_fields::email] = email;
+    object[json_fields::Password] = password;
+    object[json_fields::Email] = email;
 
     return object.dump();
 }
