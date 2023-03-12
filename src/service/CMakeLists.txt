@@ -6,6 +6,7 @@ set(TARGET service)
 set(SOURCE
     service.cpp
     utils/utils.cpp
+    resources/jsons.cpp
 )
 
 set(LIBRARIES

@@ -21,16 +21,16 @@ public:
     explicit UsersTable(std::shared_ptr<soci::session> sql);
 
     /// @see AbstractTableModel
-    bool Insert(const UserRow &user) final;
+    bool Insert(const UserRow &user, std::string &error) final;
 
     /// @see AbstractTableModel
-    bool FindById(const size_t id, UserRow &user) final;
+    bool FindById(const size_t id, UserRow &user, std::string &error) final;
 
     /// @see AbstractTableModel
-    bool FindByCondition(const UserRowCond &condition, UserRow &user) final;
+    bool FindByCondition(const UserRowCond &condition, UserRow &user, std::string &error) final;
 
     /// @see AbstractTableModel
-    bool Delete(const size_t id) final;
+    bool Delete(const size_t id, std::string &error) final;
 
     /// @see AbstractTableModel
     std::shared_ptr<soci::session> GetDatabase() final;

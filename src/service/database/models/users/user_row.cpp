@@ -2,24 +2,11 @@
 
 #include <service/utils/utils.hpp>
 
+#include <service/resources/jsons.hpp>
+
 #include <nlohmann/json.hpp>
 
 #include <chrono>
-
-/// @brief Имена полей для JSON объекте
-namespace json_fields
-{
-    static const std::string Id = "id";
-    static const std::string FirstName = "first_name";
-    static const std::string SecondName = "second_name";
-    static const std::string Age = "age";
-    static const std::string Male = "male";
-    static const std::string Interests = "interests";
-    static const std::string City = "city";
-    static const std::string Password = "password";
-    static const std::string Email = "email";
-    static const std::string Timestamp = "timestamp";
-} // json_fields
 
 bool UserRow::FromJson(const std::string &json)
 {

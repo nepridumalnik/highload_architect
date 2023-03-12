@@ -4,16 +4,11 @@
 #include <service/database/models/users/users_auth.hpp>
 #include <service/database/models/users/user_find_condition.hpp>
 
+#include <service/resources/jsons.hpp>
+
 #include <nlohmann/json.hpp>
 
 using namespace boost::beast;
-
-namespace json_fields
-{
-    static const std::string Token = "token";
-    static const std::string Status = "status";
-    static const std::string Authorized = "authorized";
-} // json_fields
 
 const std::string UserLoginController::route_ = "/login";
 
@@ -62,9 +57,11 @@ void UserLoginController::login(const http::request<http::dynamic_body> &req,
 
     UserRowCond condition{};
     UserRow user{};
+    std::string error;
 
-    if (!condition.FromJson(body) || !usersTable_->FindByCondition(condition, user))
+    if (!condition.FromJson(body) || !usersTable_->FindByCondition(condition, user, error))
     {
+        res.body() = nlohmann::json{{json_fields::Error, error}}.dump();
         return res.result(http::status::bad_request);
     }
 
@@ -72,15 +69,14 @@ void UserLoginController::login(const http::request<http::dynamic_body> &req,
     auth.id = user.id;
     auth.token = user.Tokenize();
 
-    if (!authTable_->Insert(auth))
+    if (!authTable_->Insert(auth, error))
     {
+        res.body() = nlohmann::json{{json_fields::Error, error}}.dump();
         return res.result(http::status::bad_request);
     }
-    else
-    {
-        nlohmann::json object{{json_fields::Token, auth.token}};
-        res.body() = object.dump();
-    }
+
+    nlohmann::json object{{json_fields::Token, auth.token}};
+    res.body() = object.dump();
 }
 
 void UserLoginController::unauthorize(const http::request<http::dynamic_body> &req,
@@ -95,10 +91,12 @@ void UserLoginController::unauthorize(const http::request<http::dynamic_body> &r
     }
 
     UserAuthRow auth;
+    std::string error;
 
-    if (!authTable_->FindByCondition(object[json_fields::Token], auth) ||
-        !authTable_->Delete(auth.id))
+    if (!authTable_->FindByCondition(object[json_fields::Token], auth, error) ||
+        !authTable_->Delete(auth.id, error))
     {
+        res.body() = nlohmann::json{{json_fields::Error, error}}.dump();
         return res.result(http::status::bad_request);
     }
 }
@@ -115,9 +113,11 @@ void UserLoginController::authenticate(const http::request<http::dynamic_body> &
     }
 
     UserAuthRow auth;
+    std::string error;
 
-    if (!authTable_->FindByCondition(object[json_fields::Token], auth))
+    if (!authTable_->FindByCondition(object[json_fields::Token], auth, error))
     {
+        res.body() = nlohmann::json{{json_fields::Error, error}}.dump();
         return res.result(http::status::bad_request);
     }
 

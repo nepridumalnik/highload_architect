@@ -1,13 +1,8 @@
 #include <service/database/models/users/user_auth_row.hpp>
 
-#include <nlohmann/json.hpp>
+#include <service/resources/jsons.hpp>
 
-/// @brief Имена полей для JSON объекте
-namespace json_fields
-{
-    static const std::string Id = "id";
-    static const std::string Token = "token";
-} // json_fields
+#include <nlohmann/json.hpp>
 
 bool UserAuthRow::FromJson(const std::string &json)
 {

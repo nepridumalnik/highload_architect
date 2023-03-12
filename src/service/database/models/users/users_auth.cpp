@@ -45,7 +45,7 @@ UsersAuthTable::UsersAuthTable(std::shared_ptr<UsersTable> userTable)
     }
 }
 
-bool UsersAuthTable::Insert(const UserAuthRow &auth)
+bool UsersAuthTable::Insert(const UserAuthRow &auth, std::string &error)
 {
     try
     {
@@ -64,13 +64,13 @@ bool UsersAuthTable::Insert(const UserAuthRow &auth)
     }
     catch (const std::exception &e)
     {
-        std::cerr << e.what() << std::endl;
+        error = e.what();
     }
 
     return false;
 }
 
-bool UsersAuthTable::FindById(const size_t id, UserAuthRow &auth)
+bool UsersAuthTable::FindById(const size_t id, UserAuthRow &auth, std::string &error)
 {
     try
     {
@@ -81,13 +81,13 @@ bool UsersAuthTable::FindById(const size_t id, UserAuthRow &auth)
     }
     catch (const std::exception &e)
     {
-        std::cerr << e.what() << std::endl;
+        error = e.what();
     }
 
     return false;
 }
 
-bool UsersAuthTable::Delete(const size_t id)
+bool UsersAuthTable::Delete(const size_t id, std::string &error)
 {
     try
     {
@@ -101,13 +101,13 @@ bool UsersAuthTable::Delete(const size_t id)
     }
     catch (const std::exception &e)
     {
-        std::cerr << e.what() << std::endl;
+        error = e.what();
     }
 
     return false;
 }
 
-bool UsersAuthTable::FindByCondition(const std::string &token, UserAuthRow &auth)
+bool UsersAuthTable::FindByCondition(const std::string &token, UserAuthRow &auth, std::string &error)
 {
     try
     {
@@ -118,7 +118,7 @@ bool UsersAuthTable::FindByCondition(const std::string &token, UserAuthRow &auth
     }
     catch (const std::exception &e)
     {
-        std::cerr << e.what() << std::endl;
+        error = e.what();
     }
 
     return false;

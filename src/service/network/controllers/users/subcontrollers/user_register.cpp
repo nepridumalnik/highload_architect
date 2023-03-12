@@ -3,6 +3,8 @@
 #include <service/database/models/users/users.hpp>
 #include <service/database/models/users/users_auth.hpp>
 
+#include <service/resources/jsons.hpp>
+
 #include <nlohmann/json.hpp>
 
 using namespace boost::beast;
@@ -32,8 +34,11 @@ bool UserRegisterController::HandleRequest(const std::string &route,
         const std::string body = buffers_to_string(req.body().data());
 
         UserRow user{};
-        if (!user.FromJson(body) || !usersTable_->Insert(user))
+        std::string error;
+
+        if (!user.FromJson(body) || !usersTable_->Insert(user, error))
         {
+            res.body() = nlohmann::json{{json_fields::Error, error}}.dump();
             res.result(http::status::bad_request);
         }
     }

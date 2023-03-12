@@ -1,13 +1,8 @@
 #include <service/database/models/users/user_find_condition.hpp>
 
-#include <nlohmann/json.hpp>
+#include <service/resources/jsons.hpp>
 
-/// @brief Имена полей для JSON объекте
-namespace json_fields
-{
-    static const std::string Password = "password";
-    static const std::string Email = "email";
-} // json_fields
+#include <nlohmann/json.hpp>
 
 bool UserRowCond::FromJson(const std::string &json)
 {

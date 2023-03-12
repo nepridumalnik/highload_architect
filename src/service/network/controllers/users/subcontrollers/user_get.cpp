@@ -2,6 +2,10 @@
 
 #include <service/database/models/users/users.hpp>
 
+#include <service/resources/jsons.hpp>
+
+#include <nlohmann/json.hpp>
+
 using namespace boost::beast;
 
 const std::string UserGetController::route_ = "/user/get";
@@ -38,14 +42,14 @@ bool UserGetController::HandleRequest(const std::string &route,
     const size_t id = std::stoull(substring);
 
     UserRow user{};
-    if (usersTable_->FindById(id, user))
+    std::string error;
+    if (usersTable_->FindById(id, user, error))
     {
         res.body() = user.ToJson();
     }
     else
     {
-        static const std::string emptyJson = "{}";
-        res.body() = emptyJson;
+        res.body() = nlohmann::json{{json_fields::Error, error}}.dump();
     }
 
     return true;

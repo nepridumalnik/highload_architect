@@ -47,7 +47,7 @@ UsersTable::UsersTable(std::shared_ptr<soci::session> sql) : sql_{sql}
     }
 }
 
-bool UsersTable::Insert(const UserRow &user)
+bool UsersTable::Insert(const UserRow &user, std::string &error)
 {
     try
     {
@@ -70,13 +70,13 @@ bool UsersTable::Insert(const UserRow &user)
     }
     catch (const std::exception &e)
     {
-        std::cerr << e.what() << std::endl;
+        error = e.what();
     }
 
     return false;
 }
 
-bool UsersTable::FindById(const size_t id, UserRow &user)
+bool UsersTable::FindById(const size_t id, UserRow &user, std::string &error)
 {
     try
     {
@@ -90,13 +90,13 @@ bool UsersTable::FindById(const size_t id, UserRow &user)
     }
     catch (const std::exception &e)
     {
-        std::cerr << e.what() << std::endl;
+        error = e.what();
     }
 
     return false;
 }
 
-bool UsersTable::Delete(const size_t id)
+bool UsersTable::Delete(const size_t id, std::string &error)
 {
     try
     {
@@ -110,13 +110,13 @@ bool UsersTable::Delete(const size_t id)
     }
     catch (const std::exception &e)
     {
-        std::cerr << e.what() << std::endl;
+        error = e.what();
     }
 
     return false;
 }
 
-bool UsersTable::FindByCondition(const UserRowCond &condition, UserRow &user)
+bool UsersTable::FindByCondition(const UserRowCond &condition, UserRow &user, std::string &error)
 {
     try
     {
@@ -131,7 +131,7 @@ bool UsersTable::FindByCondition(const UserRowCond &condition, UserRow &user)
     }
     catch (const std::exception &e)
     {
-        std::cerr << e.what() << std::endl;
+        error = e.what();
     }
 
     return false;
