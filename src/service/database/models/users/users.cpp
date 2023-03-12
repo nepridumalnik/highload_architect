@@ -38,8 +38,7 @@ UsersTable::UsersTable(std::shared_ptr<soci::session> sql) : sql_{sql}
     try
     {
         soci::transaction transaction{*sql_};
-        soci::statement st = (sql_->prepare << querries::CreateTable);
-
+        *sql_ << querries::CreateTable;
         transaction.commit();
     }
     catch (const std::exception &e)
