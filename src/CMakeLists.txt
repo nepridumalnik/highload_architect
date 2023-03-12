@@ -1,6 +1,6 @@
 add_subdirectory(service)
 
-set(TARGET hihgload_server)
+set(TARGET highload_server)
 
 set(SOURCES
     main.cpp
@@ -12,3 +12,5 @@ set(LIBRARIES
 
 add_executable(${TARGET} ${SOURCES})
 target_link_libraries(${TARGET} PRIVATE ${LIBRARIES})
+
+install(TARGETS ${TARGET})

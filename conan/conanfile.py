@@ -50,11 +50,3 @@ class HighloadServer(ConanFile):
         for library in libraries:
             self.copy(library, dst='bin', src='bin', keep_path=False)
             self.copy(library, dst='lib', src='lib', keep_path=False)
-
-    def package(self) -> None:
-        self.copy('*.h', dst='include', src='include')
-        self.copy('*.lib', dst='lib', src='lib')
-        self.copy('*.dll', dst='bin', src='bin')
-        self.copy('*.so', dst='lib', src='lib')
-        self.copy('*.dylib', dst='lib', src='lib')
-        self.copy('*.a', dst='lib', src='lib')

@@ -17,3 +17,5 @@ set(LIBRARIES
 
 add_library(${TARGET} SHARED ${SOURCE})
 target_link_libraries(${TARGET} PRIVATE ${LIBRARIES})
+
+install(TARGETS ${TARGET})
