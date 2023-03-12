@@ -18,5 +18,7 @@ namespace json_fields
     extern const std::string Email;
     extern const std::string Timestamp;
     extern const std::string Authorized;
+    extern const std::string Unathorized;
     extern const std::string Status;
+    extern const std::string Success;
 } // namespace json_fields

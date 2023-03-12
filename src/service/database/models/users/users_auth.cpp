@@ -60,7 +60,9 @@ bool UsersAuthTable::Insert(const UserAuthRow &auth, std::string &error)
         soci::statement st = (sql_->prepare << querries::InsertUser,
                               soci::use(auth.id), soci::use(auth.token));
 
-        if (!st.execute())
+        st.execute();
+
+        if (st.get_affected_rows() == 0)
         {
             error = messages::InsertionError;
             return false;
@@ -68,7 +70,7 @@ bool UsersAuthTable::Insert(const UserAuthRow &auth, std::string &error)
 
         transaction.commit();
 
-        return st.fetch();
+        return true;
     }
     catch (const std::exception &e)
     {
@@ -85,13 +87,15 @@ bool UsersAuthTable::FindById(const size_t id, UserAuthRow &auth, std::string &e
         soci::statement st = (sql_->prepare << querries::SelectUserById, soci::use(id),
                               soci::into(auth.id), soci::into(auth.token));
 
-        if (!st.execute())
+        st.execute(true);
+
+        if (st.get_affected_rows() == 0)
         {
             error = messages::NotFound;
             return false;
         }
 
-        return st.fetch();
+        return true;
     }
     catch (const std::exception &e)
     {
@@ -108,7 +112,9 @@ bool UsersAuthTable::Delete(const size_t id, std::string &error)
         soci::transaction transaction{*sql_};
         soci::statement st = (sql_->prepare << querries::DeleteUser, soci::use(id));
 
-        if (!st.execute())
+        st.execute();
+
+        if (st.get_affected_rows() == 0)
         {
             error = messages::DeletionError;
             return false;
@@ -116,7 +122,7 @@ bool UsersAuthTable::Delete(const size_t id, std::string &error)
 
         transaction.commit();
 
-        return st.fetch();
+        return true;
     }
     catch (const std::exception &e)
     {
@@ -133,13 +139,15 @@ bool UsersAuthTable::FindByCondition(const std::string &token, UserAuthRow &auth
         soci::statement st = (sql_->prepare << querries::SelectUserByCondition,
                               soci::use(token), soci::into(auth.id), soci::into(auth.token));
 
-        if (!st.execute())
+        st.execute(true);
+
+        if (st.get_affected_rows() == 0)
         {
             error = messages::NotFound;
             return false;
         }
 
-        return st.fetch();
+        return true;
     }
     catch (const std::exception &e)
     {

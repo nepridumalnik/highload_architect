@@ -65,7 +65,9 @@ bool UsersTable::Insert(const UserRow &user, std::string &error)
                               soci::use(user.interests), soci::use(user.city),
                               soci::use(user.password), soci::use(user.email));
 
-        if (!st.execute())
+        st.execute();
+
+        if (st.get_affected_rows() == 0)
         {
             error = messages::InsertionError;
             return false;
@@ -73,7 +75,7 @@ bool UsersTable::Insert(const UserRow &user, std::string &error)
 
         transaction.commit();
 
-        return st.fetch();
+        return true;
     }
     catch (const std::exception &e)
     {
@@ -93,13 +95,15 @@ bool UsersTable::FindById(const size_t id, UserRow &user, std::string &error)
                               soci::into(*reinterpret_cast<int *>(&user.male)), soci::into(user.interests),
                               soci::into(user.city), soci::into(user.password), soci::into(user.email));
 
-        if (!st.execute())
+        st.execute(true);
+
+        if (st.get_affected_rows() == 0)
         {
             error = messages::NotFound;
             return false;
         }
 
-        return st.fetch();
+        return true;
     }
     catch (const std::exception &e)
     {
@@ -116,7 +120,9 @@ bool UsersTable::Delete(const size_t id, std::string &error)
         soci::transaction transaction{*sql_};
         soci::statement st = (sql_->prepare << querries::DeleteUser, soci::use(id));
 
-        if (!st.execute())
+        st.execute();
+
+        if (st.get_affected_rows() == 0)
         {
             error = messages::DeletionError;
             return false;
@@ -124,7 +130,7 @@ bool UsersTable::Delete(const size_t id, std::string &error)
 
         transaction.commit();
 
-        return st.fetch();
+        return true;
     }
     catch (const std::exception &e)
     {
@@ -145,13 +151,15 @@ bool UsersTable::FindByCondition(const UserRowCond &condition, UserRow &user, st
                               soci::into(user.interests), soci::into(user.city), soci::into(user.password),
                               soci::into(user.email));
 
-        if (!st.execute())
+        st.execute(true);
+
+        if (st.get_affected_rows() == 0)
         {
             error = messages::NotFound;
             return false;
         }
 
-        return st.fetch();
+        return true;
     }
     catch (const std::exception &e)
     {

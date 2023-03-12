@@ -15,5 +15,7 @@ namespace json_fields
     const std::string Email = "email";
     const std::string Timestamp = "timestamp";
     const std::string Authorized = "authorized";
+    const std::string Unathorized = "unathorized";
     const std::string Status = "status";
+    const std::string Success = "success";
 } // namespace json_fields

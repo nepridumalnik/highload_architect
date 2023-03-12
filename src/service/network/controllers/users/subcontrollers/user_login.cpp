@@ -99,6 +99,9 @@ void UserLoginController::unauthorize(const http::request<http::dynamic_body> &r
         res.body() = nlohmann::json{{json_fields::Error, error}}.dump();
         return res.result(http::status::not_found);
     }
+
+    static const std::string statusSuccess = nlohmann::json{{json_fields::Status, json_fields::Success}}.dump();
+    res.body() = statusSuccess;
 }
 
 void UserLoginController::authenticate(const http::request<http::dynamic_body> &req,
