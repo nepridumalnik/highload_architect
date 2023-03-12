@@ -12,15 +12,43 @@ UserLoginController::UserLoginController(std::shared_ptr<UsersTable> usersTable)
 }
 
 bool UserLoginController::HandleRequest(const std::string &route,
-                                        const http::request<http::dynamic_body> &req,
-                                        websocket::response_type &res)
+                                        const http::request<http::dynamic_body> &req, websocket::response_type &res)
 {
     if (route_ != route)
     {
         return false;
     }
 
-    res.body() = "<h1>Контроллер авторизации пользователей</h1>";
+    switch (req.method())
+    {
+    case http::verb::post:
+        login(req, res);
+        break;
+
+    case http::verb::get:
+        authenticate(req, res);
+        break;
+
+    case http::verb::delete_:
+        unauthorize(req, res);
+        break;
+
+    default:
+        res.result(http::status::bad_request);
+        break;
+    }
 
     return true;
+}
+
+void UserLoginController::login(const http::request<http::dynamic_body> &req, websocket::response_type &res)
+{
+}
+
+void UserLoginController::unauthorize(const http::request<http::dynamic_body> &req, boost::beast::websocket::response_type &res)
+{
+}
+
+void UserLoginController::authenticate(const http::request<http::dynamic_body> &req, websocket::response_type &res)
+{
 }
