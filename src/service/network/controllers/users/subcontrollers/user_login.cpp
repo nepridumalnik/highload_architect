@@ -8,6 +8,11 @@
 
 using namespace boost::beast;
 
+namespace json_fields
+{
+    static const std::string Token = "token";
+} // json_fields
+
 const std::string UserLoginController::route_ = "/login";
 
 UserLoginController::UserLoginController(std::shared_ptr<UsersTable> usersTable,
@@ -58,8 +63,7 @@ void UserLoginController::login(const http::request<http::dynamic_body> &req,
 
     if (!condition.FromJson(body) || !usersTable_->FindByCondition(condition, user))
     {
-        res.result(http::status::bad_request);
-        return;
+        return res.result(http::status::bad_request);
     }
 
     UserAuthRow auth{};
@@ -68,19 +72,33 @@ void UserLoginController::login(const http::request<http::dynamic_body> &req,
 
     if (!authTable_->Insert(auth))
     {
-        res.result(http::status::bad_request);
+        return res.result(http::status::bad_request);
     }
     else
     {
-        static const std::string token = "token";
-        nlohmann::json json{{token, auth.token}};
-        res.body() = json.dump();
+        nlohmann::json object{{json_fields::Token, auth.token}};
+        res.body() = object.dump();
     }
 }
 
 void UserLoginController::unauthorize(const http::request<http::dynamic_body> &req,
                                       boost::beast::websocket::response_type &res)
 {
+    const std::string body = buffers_to_string(req.body().data());
+    const nlohmann::json object = nlohmann::json::parse(body);
+
+    if (!object.contains(json_fields::Token) && !object[json_fields::Token].is_string())
+    {
+        return res.result(http::status::bad_request);
+    }
+
+    UserAuthRow auth;
+
+    if (!authTable_->FindByCondition(object[json_fields::Token], auth) ||
+        !authTable_->Delete(auth.id))
+    {
+        return res.result(http::status::bad_request);
+    }
 }
 
 void UserLoginController::authenticate(const http::request<http::dynamic_body> &req,

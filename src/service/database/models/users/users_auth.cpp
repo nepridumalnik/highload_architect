@@ -12,7 +12,7 @@
 namespace querries
 {
     static const std::string CreateTable = "CREATE TABLE IF NOT EXISTS Tokens (\n"
-                                           "ID INT NOT NULL,\n"
+                                           "ID INT NOT NULL UNIQUE,\n"
                                            "Token VARCHAR(255) NOT NULL UNIQUE,\n"
                                            "FOREIGN KEY (ID) REFERENCES Users(ID),\n"
                                            "INDEX (Token)\n,"
