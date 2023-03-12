@@ -4,6 +4,8 @@
 
 #include <nlohmann/json.hpp>
 
+#include <chrono>
+
 /// @brief Имена полей для JSON объекте
 namespace json_fields
 {
@@ -16,6 +18,7 @@ namespace json_fields
     static const std::string city = "city";
     static const std::string password = "password";
     static const std::string email = "email";
+    static const std::string timestamp = "timestamp";
 } // json_fields
 
 bool UserRow::FromJson(const std::string &json)
@@ -73,13 +76,14 @@ std::string UserRow::ToJson() const
 
 std::string UserRow::Tokenize() const
 {
-    // Задел на будущее, чтобы пока Base64 не тащить
     static const std::string header = nlohmann::json{{"alg", "MD5"}, {"typ", "JWT"}}.dump();
-    const std::string payload = nlohmann::json{{json_fields::password, password}, {json_fields::email, email}}.dump();
+    const std::chrono::system_clock::time_point timestamp = std::chrono::system_clock::now();
+    const std::string timestampStr = std::to_string(timestamp.time_since_epoch().count());
+    const std::string payload = nlohmann::json{{json_fields::password, password}, {json_fields::email, email}, {json_fields::timestamp, timestampStr}}.dump();
     const std::string signature = HashMD5(payload);
 
     std::string token;
-    token.reserve(header.size() + payload.size() + signature.size() + 2);
+    token.reserve(header.size() + payload.size() + signature.size() + timestampStr.size() + 2);
 
     token = header + '.';
     token += payload + '.';
