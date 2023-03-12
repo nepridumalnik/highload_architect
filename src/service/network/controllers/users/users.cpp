@@ -12,7 +12,7 @@ using namespace boost::beast;
 UsersController::UsersController(std::shared_ptr<soci::session> sql)
 {
     usersTable_ = std::make_shared<UsersTable>(sql);
-    authTable_ = std::make_shared<UsersAuthTable>(sql);
+    authTable_ = std::make_shared<UsersAuthTable>(usersTable_);
 
     subcontrollers_.push_back(std::make_unique<UserGetController>(usersTable_));
     subcontrollers_.push_back(std::make_unique<UserLoginController>(usersTable_));

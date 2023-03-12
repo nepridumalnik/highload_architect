@@ -1,5 +1,7 @@
 #include <service/database/models/users/users_auth.hpp>
 
+#include <service/database/models/users/users.hpp>
+
 #include <soci/transaction.h>
 #include <soci/session.h>
 
@@ -9,23 +11,24 @@
 /// @brief Запросы к MySQL базе данных
 namespace querries
 {
-    static const std::string CreateTable = "CREATE TABLE IF NOT EXISTS AuthorizedUsers (\n"
-                                           "ID INT NOT NULL PRIMARY KEY,\n"
-                                           "Password VARCHAR(50) NOT NULL,\n"
-                                           "Email VARCHAR(50) NOT NULL,\n"
-                                           "Token VARCHAR(255) NOT NULL\n"
+    static const std::string CreateTable = "CREATE TABLE IF NOT EXISTS Tokens (\n"
+                                           "ID INT NOT NULL,\n"
+                                           "Token VARCHAR(255) NOT NULL UNIQUE,\n"
+                                           "FOREIGN KEY (ID) REFERENCES Users(ID),\n"
+                                           "INDEX (Token)\n,"
+                                           "INDEX (ID)\n"
                                            ") ENGINE=InnoDB CHARSET=utf8;";
-    static const std::string InsertUser = "INSERT INTO AuthorizedUsers(ID, Password, Email, Token) "
+    static const std::string InsertUser = "INSERT INTO Tokens(ID, Token) "
                                           "VALUES(:ID, :Password, :Email, :Token)";
-    static const std::string SelectUserById = "SELECT DISTINCT ID, Password, Email, Token "
-                                              "FROM AuthorizedUsers WHERE ID = :ID";
-    static const std::string SelectUserByCondition = "SELECT DISTINCT ID, Password, Email, Token "
-                                                     "FROM AuthorizedUsers WHERE Password = :Password AND Email = :Email";
-    static const std::string DeleteUser = "DELETE FROM AuthorizedUsers WHERE ID = :ID";
+    static const std::string SelectUserById = "SELECT DISTINCT ID, Token "
+                                              "FROM Tokens WHERE ID = :ID";
+    static const std::string SelectUserByCondition = "SELECT DISTINCT ID, Token "
+                                                     "FROM Tokens WHERE Token = :Token";
+    static const std::string DeleteUser = "DELETE FROM Tokens WHERE ID = :ID";
 } // namespace querries
 
-UsersAuthTable::UsersAuthTable(std::shared_ptr<soci::session> sql)
-    : sql_{sql},
+UsersAuthTable::UsersAuthTable(std::shared_ptr<UsersTable> userTable)
+    : sql_{userTable->GetDatabase()},
       insert_{*sql_},
       selectById_{*sql_},
       selectByCondition_{*sql_},
@@ -63,8 +66,6 @@ bool UsersAuthTable::Insert(const UserAuthRow &auth)
         soci::transaction transaction{*sql_};
 
         insert_.exchange(soci::use(auth.id));
-        insert_.exchange(soci::use(auth.password));
-        insert_.exchange(soci::use(auth.email));
         insert_.exchange(soci::use(auth.token));
 
         insert_.define_and_bind();
@@ -90,8 +91,6 @@ bool UsersAuthTable::FindById(const size_t id, UserAuthRow &auth)
         selectById_.exchange(soci::use(id));
 
         selectById_.exchange(soci::into(auth.id));
-        selectById_.exchange(soci::into(auth.password));
-        selectById_.exchange(soci::into(auth.email));
         selectById_.exchange(soci::into(auth.token));
 
         selectById_.define_and_bind();
@@ -132,16 +131,13 @@ bool UsersAuthTable::Delete(const size_t id)
     return false;
 }
 
-bool UsersAuthTable::FindByCondition(const UserRowCond &condition, UserAuthRow &auth)
+bool UsersAuthTable::FindByCondition(const std::string &token, UserAuthRow &auth)
 {
     try
     {
-        selectByCondition_.exchange(soci::use(condition.password));
-        selectByCondition_.exchange(soci::use(condition.email));
+        selectByCondition_.exchange(soci::use(token));
 
         selectByCondition_.exchange(soci::into(auth.id));
-        selectByCondition_.exchange(soci::into(auth.password));
-        selectByCondition_.exchange(soci::into(auth.email));
         selectByCondition_.exchange(soci::into(auth.token));
 
         selectByCondition_.define_and_bind();
@@ -156,4 +152,9 @@ bool UsersAuthTable::FindByCondition(const UserRowCond &condition, UserAuthRow &
     }
 
     return false;
+}
+
+std::shared_ptr<soci::session> UsersAuthTable::GetDatabase()
+{
+    return sql_;
 }

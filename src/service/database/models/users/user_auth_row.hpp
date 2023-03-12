@@ -8,12 +8,6 @@ struct UserAuthRow : public AbstractTableRow
     /// @brief Идентификатор
     int id;
 
-    /// @brief Пароль
-    std::string password;
-
-    /// @brief Почта
-    std::string email;
-
     /// @brief Токен
     std::string token;
 

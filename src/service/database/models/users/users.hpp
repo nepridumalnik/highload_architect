@@ -15,7 +15,7 @@ namespace soci
 } // namespace soci
 
 /// @brief Класс, управляющий таблицей с пользователями
-class UsersTable : public AbstractTableModel<UserRow, UserRowCond>
+class UsersTable : public AbstractTableModel<UserRow, UserRowCond, std::shared_ptr<soci::session>>
 {
 public:
     /// @brief Конструктор
@@ -33,6 +33,9 @@ public:
 
     /// @see AbstractTableModel
     bool Delete(const size_t id) final;
+
+    /// @see AbstractTableModel
+    std::shared_ptr<soci::session> GetDatabase() final;
 
 private:
     /// @brief База данных

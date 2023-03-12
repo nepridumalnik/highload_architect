@@ -178,3 +178,8 @@ bool UsersTable::FindByCondition(const UserRowCond &condition, UserRow &user)
 
     return false;
 }
+
+std::shared_ptr<soci::session> UsersTable::GetDatabase()
+{
+    return sql_;
+}

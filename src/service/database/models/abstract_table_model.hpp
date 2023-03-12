@@ -5,7 +5,8 @@
 /// @brief Интерфейс модели
 /// @tparam T тип структуры
 /// @tparam F структура для поиска
-template <typename T, typename F>
+/// @tparam Db база данных
+template <typename T, typename F, typename Db>
 struct AbstractTableModel
 {
     /// @brief Виртуальный деструктор
@@ -33,4 +34,8 @@ struct AbstractTableModel
     /// @param id Идентификатор
     /// @return True, если удачно
     virtual bool Delete(const size_t id) = 0;
+
+    /// @brief Получить родительскую базу данных
+    /// @return База данных
+    virtual Db GetDatabase() = 0;
 };
