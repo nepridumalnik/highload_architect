@@ -5,8 +5,6 @@
 #include <service/database/models/users/user_row.hpp>
 #include <service/database/models/users/user_find_condition.hpp>
 
-#include <soci/statement.h>
-
 #include <memory>
 
 namespace soci
@@ -40,16 +38,4 @@ public:
 private:
     /// @brief База данных
     std::shared_ptr<soci::session> sql_;
-
-    /// @brief Запрос по добавлению пользователя
-    soci::statement insert_;
-
-    /// @brief Запрос по выбору пользователя по идентификатору
-    soci::statement selectById_;
-
-    /// @brief Запрос по выбору пользователя по паролю и почте
-    soci::statement selectByCondition_;
-
-    /// @brief Запрос по удалению пользователя
-    soci::statement delete_;
 };

@@ -28,11 +28,7 @@ namespace querries
 } // namespace querries
 
 UsersAuthTable::UsersAuthTable(std::shared_ptr<UsersTable> userTable)
-    : sql_{userTable->GetDatabase()},
-      insert_{*sql_},
-      selectById_{*sql_},
-      selectByCondition_{*sql_},
-      delete_{*sql_}
+    : sql_{userTable->GetDatabase()}
 {
     try
     {
@@ -41,11 +37,6 @@ UsersAuthTable::UsersAuthTable(std::shared_ptr<UsersTable> userTable)
             *sql_ << querries::CreateTable;
             transaction.commit();
         }
-
-        insert_.prepare(querries::InsertUser);
-        selectById_.prepare(querries::SelectUserById);
-        selectByCondition_.prepare(querries::SelectUserByCondition);
-        delete_.prepare(querries::DeleteUser);
     }
     catch (const std::exception &e)
     {
@@ -65,12 +56,7 @@ bool UsersAuthTable::Insert(const UserAuthRow &auth)
 
         soci::transaction transaction{*sql_};
 
-        insert_.exchange(soci::use(auth.id));
-        insert_.exchange(soci::use(auth.token));
-
-        insert_.define_and_bind();
-        insert_.execute(true);
-        insert_.bind_clean_up();
+        (*sql_) << querries::InsertUser, soci::use(auth.id), soci::use(auth.token);
 
         transaction.commit();
 
@@ -88,16 +74,10 @@ bool UsersAuthTable::FindById(const size_t id, UserAuthRow &auth)
 {
     try
     {
-        selectById_.exchange(soci::use(id));
+        (*sql_) << querries::SelectUserById, soci::use(id),
+            soci::into(auth.id), soci::into(auth.token);
 
-        selectById_.exchange(soci::into(auth.id));
-        selectById_.exchange(soci::into(auth.token));
-
-        selectById_.define_and_bind();
-        const bool result = selectById_.execute(true);
-        selectById_.bind_clean_up();
-
-        return result;
+        return true;
     }
     catch (const std::exception &e)
     {
@@ -113,11 +93,7 @@ bool UsersAuthTable::Delete(const size_t id)
     {
         soci::transaction transaction{*sql_};
 
-        delete_.exchange(soci::use(id));
-
-        delete_.define_and_bind();
-        delete_.execute(true);
-        delete_.bind_clean_up();
+        (*sql_) << querries::DeleteUser, soci::use(id);
 
         transaction.commit();
 
@@ -135,16 +111,10 @@ bool UsersAuthTable::FindByCondition(const std::string &token, UserAuthRow &auth
 {
     try
     {
-        selectByCondition_.exchange(soci::use(token));
+        (*sql_) << querries::SelectUserByCondition, soci::use(token),
+            soci::into(auth.id), soci::into(auth.token);
 
-        selectByCondition_.exchange(soci::into(auth.id));
-        selectByCondition_.exchange(soci::into(auth.token));
-
-        selectByCondition_.define_and_bind();
-        const bool result = selectByCondition_.execute(true);
-        selectByCondition_.bind_clean_up();
-
-        return result;
+        return true;
     }
     catch (const std::exception &e)
     {

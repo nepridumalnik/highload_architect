@@ -30,12 +30,7 @@ namespace querries
     static const std::string DeleteUser = "DELETE FROM Users WHERE ID = :ID";
 } // namespace querries
 
-UsersTable::UsersTable(std::shared_ptr<soci::session> sql)
-    : sql_{sql},
-      insert_{*sql_},
-      selectById_{*sql_},
-      selectByCondition_{*sql_},
-      delete_{*sql_}
+UsersTable::UsersTable(std::shared_ptr<soci::session> sql) : sql_{sql}
 {
     try
     {
@@ -44,12 +39,6 @@ UsersTable::UsersTable(std::shared_ptr<soci::session> sql)
             *sql_ << querries::CreateTable;
             transaction.commit();
         }
-
-        // Компиляция команд
-        insert_.prepare(querries::InsertUser);
-        selectById_.prepare(querries::SelectUserById);
-        selectByCondition_.prepare(querries::SelectUserByCondition);
-        delete_.prepare(querries::DeleteUser);
     }
     catch (const std::exception &e)
     {
@@ -69,18 +58,11 @@ bool UsersTable::Insert(const UserRow &user)
 
         soci::transaction transaction{*sql_};
 
-        insert_.exchange(soci::use(user.name));
-        insert_.exchange(soci::use(user.secondName));
-        insert_.exchange(soci::use(user.age));
-        insert_.exchange(soci::use(static_cast<int>(user.male)));
-        insert_.exchange(soci::use(user.interests));
-        insert_.exchange(soci::use(user.city));
-        insert_.exchange(soci::use(user.password));
-        insert_.exchange(soci::use(user.email));
-
-        insert_.define_and_bind();
-        insert_.execute(true);
-        insert_.bind_clean_up();
+        (*sql_) << querries::InsertUser,
+            soci::use(user.name), soci::use(user.secondName),
+            soci::use(user.age), soci::use(static_cast<int>(user.male)),
+            soci::use(user.interests), soci::use(user.city),
+            soci::use(user.password), soci::use(user.email);
 
         transaction.commit();
 
@@ -98,23 +80,13 @@ bool UsersTable::FindById(const size_t id, UserRow &user)
 {
     try
     {
-        selectById_.exchange(soci::use(id));
+        (*sql_) << querries::SelectUserById, soci::use(id),
+            soci::into(user.id), soci::into(user.name),
+            soci::into(user.secondName), soci::into(user.age),
+            soci::into(*reinterpret_cast<int *>(&user.male)), soci::into(user.interests),
+            soci::into(user.city), soci::into(user.password), soci::into(user.email);
 
-        selectById_.exchange(soci::into(user.id));
-        selectById_.exchange(soci::into(user.name));
-        selectById_.exchange(soci::into(user.secondName));
-        selectById_.exchange(soci::into(user.age));
-        selectById_.exchange(soci::into(*reinterpret_cast<int *>(&user.male)));
-        selectById_.exchange(soci::into(user.interests));
-        selectById_.exchange(soci::into(user.city));
-        selectById_.exchange(soci::into(user.password));
-        selectById_.exchange(soci::into(user.email));
-
-        selectById_.define_and_bind();
-        const bool result = selectById_.execute(true);
-        selectById_.bind_clean_up();
-
-        return result;
+        return true;
     }
     catch (const std::exception &e)
     {
@@ -130,11 +102,7 @@ bool UsersTable::Delete(const size_t id)
     {
         soci::transaction transaction{*sql_};
 
-        delete_.exchange(soci::use(id));
-
-        delete_.define_and_bind();
-        delete_.execute(true);
-        delete_.bind_clean_up();
+        (*sql_) << querries::DeleteUser, soci::use(id);
 
         transaction.commit();
 
@@ -152,24 +120,14 @@ bool UsersTable::FindByCondition(const UserRowCond &condition, UserRow &user)
 {
     try
     {
-        selectByCondition_.exchange(soci::use(condition.password));
-        selectByCondition_.exchange(soci::use(condition.email));
+        (*sql_) << querries::SelectUserByCondition,
+            soci::use(condition.password), soci::use(condition.email),
+            soci::into(user.id), soci::into(user.name), soci::into(user.secondName),
+            soci::into(user.age), soci::into(*reinterpret_cast<int *>(&user.male)),
+            soci::into(user.interests), soci::into(user.city), soci::into(user.password),
+            soci::into(user.email);
 
-        selectByCondition_.exchange(soci::into(user.id));
-        selectByCondition_.exchange(soci::into(user.name));
-        selectByCondition_.exchange(soci::into(user.secondName));
-        selectByCondition_.exchange(soci::into(user.age));
-        selectByCondition_.exchange(soci::into(*reinterpret_cast<int *>(&user.male)));
-        selectByCondition_.exchange(soci::into(user.interests));
-        selectByCondition_.exchange(soci::into(user.city));
-        selectByCondition_.exchange(soci::into(user.password));
-        selectByCondition_.exchange(soci::into(user.email));
-
-        selectByCondition_.define_and_bind();
-        const bool result = selectByCondition_.execute(true);
-        selectByCondition_.bind_clean_up();
-
-        return result;
+        return true;
     }
     catch (const std::exception &e)
     {

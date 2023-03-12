@@ -5,8 +5,6 @@
 #include <service/database/models/users/user_auth_row.hpp>
 #include <service/database/models/users/user_find_condition.hpp>
 
-#include <soci/statement.h>
-
 #include <memory>
 
 class UsersTable;
@@ -21,7 +19,7 @@ class UsersAuthTable : public AbstractTableModel<UserAuthRow, const std::string 
 {
 public:
     /// @brief Конструктор
-    /// @param sql База данных
+    /// @param sql База данных с пользовательской таблицей, от которой зависит эта таблица
     explicit UsersAuthTable(std::shared_ptr<UsersTable> userTable);
 
     /// @see AbstractTableModel
@@ -42,16 +40,4 @@ public:
 private:
     /// @brief База данных
     std::shared_ptr<soci::session> sql_;
-
-    /// @brief Запрос по добавлению пользователя
-    soci::statement insert_;
-
-    /// @brief Запрос по выбору пользователя по идентификатору
-    soci::statement selectById_;
-
-    /// @brief Запрос по выбору пользователя по паролю и почте
-    soci::statement selectByCondition_;
-
-    /// @brief Запрос по удалению пользователя
-    soci::statement delete_;
 };
