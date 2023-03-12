@@ -11,6 +11,8 @@ using namespace boost::beast;
 namespace json_fields
 {
     static const std::string Token = "token";
+    static const std::string Status = "status";
+    static const std::string Authorized = "authorized";
 } // json_fields
 
 const std::string UserLoginController::route_ = "/login";
@@ -104,4 +106,21 @@ void UserLoginController::unauthorize(const http::request<http::dynamic_body> &r
 void UserLoginController::authenticate(const http::request<http::dynamic_body> &req,
                                        websocket::response_type &res)
 {
+    const std::string body = buffers_to_string(req.body().data());
+    const nlohmann::json object = nlohmann::json::parse(body);
+
+    if (!object.contains(json_fields::Token) && !object[json_fields::Token].is_string())
+    {
+        return res.result(http::status::bad_request);
+    }
+
+    UserAuthRow auth;
+
+    if (!authTable_->FindByCondition(object[json_fields::Token], auth))
+    {
+        return res.result(http::status::bad_request);
+    }
+
+    static const std::string authorized = nlohmann::json{{json_fields::Status, json_fields::Authorized}}.dump();
+    res.body() = authorized;
 }
