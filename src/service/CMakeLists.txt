@@ -7,6 +7,7 @@ set(SOURCE
     service.cpp
     utils/utils.cpp
     resources/jsons.cpp
+    resources/messages.cpp
 )
 
 set(LIBRARIES

@@ -2,7 +2,10 @@
 
 #include <service/database/models/users/users.hpp>
 
+#include <service/resources/messages.hpp>
+
 #include <soci/transaction.h>
+#include <soci/statement.h>
 #include <soci/session.h>
 
 #include <stdexcept>
@@ -32,11 +35,10 @@ UsersAuthTable::UsersAuthTable(std::shared_ptr<UsersTable> userTable)
 {
     try
     {
-        {
-            soci::transaction transaction{*sql_};
-            *sql_ << querries::CreateTable;
-            transaction.commit();
-        }
+        soci::transaction transaction{*sql_};
+        soci::statement st = (sql_->prepare << querries::CreateTable);
+
+        transaction.commit();
     }
     catch (const std::exception &e)
     {
@@ -56,11 +58,18 @@ bool UsersAuthTable::Insert(const UserAuthRow &auth, std::string &error)
 
         soci::transaction transaction{*sql_};
 
-        (*sql_) << querries::InsertUser, soci::use(auth.id), soci::use(auth.token);
+        soci::statement st = (sql_->prepare << querries::InsertUser,
+                              soci::use(auth.id), soci::use(auth.token));
+
+        if (!st.execute())
+        {
+            error = messages::InsertionError;
+            return false;
+        }
 
         transaction.commit();
 
-        return true;
+        return st.fetch();
     }
     catch (const std::exception &e)
     {
@@ -74,10 +83,16 @@ bool UsersAuthTable::FindById(const size_t id, UserAuthRow &auth, std::string &e
 {
     try
     {
-        (*sql_) << querries::SelectUserById, soci::use(id),
-            soci::into(auth.id), soci::into(auth.token);
+        soci::statement st = (sql_->prepare << querries::SelectUserById, soci::use(id),
+                              soci::into(auth.id), soci::into(auth.token));
 
-        return true;
+        if (!st.execute())
+        {
+            error = messages::NotFound;
+            return false;
+        }
+
+        return st.fetch();
     }
     catch (const std::exception &e)
     {
@@ -92,12 +107,17 @@ bool UsersAuthTable::Delete(const size_t id, std::string &error)
     try
     {
         soci::transaction transaction{*sql_};
+        soci::statement st = (sql_->prepare << querries::DeleteUser, soci::use(id));
 
-        (*sql_) << querries::DeleteUser, soci::use(id);
+        if (!st.execute())
+        {
+            error = messages::DeletionError;
+            return false;
+        }
 
         transaction.commit();
 
-        return true;
+        return st.fetch();
     }
     catch (const std::exception &e)
     {
@@ -111,10 +131,16 @@ bool UsersAuthTable::FindByCondition(const std::string &token, UserAuthRow &auth
 {
     try
     {
-        (*sql_) << querries::SelectUserByCondition, soci::use(token),
-            soci::into(auth.id), soci::into(auth.token);
+        soci::statement st = (sql_->prepare << querries::SelectUserByCondition,
+                              soci::use(token), soci::into(auth.id), soci::into(auth.token));
 
-        return true;
+        if (!st.execute())
+        {
+            error = messages::NotFound;
+            return false;
+        }
+
+        return st.fetch();
     }
     catch (const std::exception &e)
     {

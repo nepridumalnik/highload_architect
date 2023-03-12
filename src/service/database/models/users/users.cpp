@@ -1,6 +1,9 @@
 #include <service/database/models/users/users.hpp>
 
+#include <service/resources/messages.hpp>
+
 #include <soci/transaction.h>
+#include <soci/statement.h>
 #include <soci/session.h>
 
 #include <stdexcept>
@@ -34,11 +37,10 @@ UsersTable::UsersTable(std::shared_ptr<soci::session> sql) : sql_{sql}
 {
     try
     {
-        {
-            soci::transaction transaction{*sql_};
-            *sql_ << querries::CreateTable;
-            transaction.commit();
-        }
+        soci::transaction transaction{*sql_};
+        soci::statement st = (sql_->prepare << querries::CreateTable);
+
+        transaction.commit();
     }
     catch (const std::exception &e)
     {
@@ -58,15 +60,21 @@ bool UsersTable::Insert(const UserRow &user, std::string &error)
 
         soci::transaction transaction{*sql_};
 
-        (*sql_) << querries::InsertUser,
-            soci::use(user.name), soci::use(user.secondName),
-            soci::use(user.age), soci::use(static_cast<int>(user.male)),
-            soci::use(user.interests), soci::use(user.city),
-            soci::use(user.password), soci::use(user.email);
+        soci::statement st = (sql_->prepare << querries::InsertUser,
+                              soci::use(user.name), soci::use(user.secondName),
+                              soci::use(user.age), soci::use(static_cast<int>(user.male)),
+                              soci::use(user.interests), soci::use(user.city),
+                              soci::use(user.password), soci::use(user.email));
+
+        if (!st.execute())
+        {
+            error = messages::InsertionError;
+            return false;
+        }
 
         transaction.commit();
 
-        return true;
+        return st.fetch();
     }
     catch (const std::exception &e)
     {
@@ -80,13 +88,19 @@ bool UsersTable::FindById(const size_t id, UserRow &user, std::string &error)
 {
     try
     {
-        (*sql_) << querries::SelectUserById, soci::use(id),
-            soci::into(user.id), soci::into(user.name),
-            soci::into(user.secondName), soci::into(user.age),
-            soci::into(*reinterpret_cast<int *>(&user.male)), soci::into(user.interests),
-            soci::into(user.city), soci::into(user.password), soci::into(user.email);
+        soci::statement st = (sql_->prepare << querries::SelectUserById, soci::use(id),
+                              soci::into(user.id), soci::into(user.name),
+                              soci::into(user.secondName), soci::into(user.age),
+                              soci::into(*reinterpret_cast<int *>(&user.male)), soci::into(user.interests),
+                              soci::into(user.city), soci::into(user.password), soci::into(user.email));
 
-        return true;
+        if (!st.execute())
+        {
+            error = messages::NotFound;
+            return false;
+        }
+
+        return st.fetch();
     }
     catch (const std::exception &e)
     {
@@ -101,12 +115,17 @@ bool UsersTable::Delete(const size_t id, std::string &error)
     try
     {
         soci::transaction transaction{*sql_};
+        soci::statement st = (sql_->prepare << querries::DeleteUser, soci::use(id));
 
-        (*sql_) << querries::DeleteUser, soci::use(id);
+        if (!st.execute())
+        {
+            error = messages::DeletionError;
+            return false;
+        }
 
         transaction.commit();
 
-        return true;
+        return st.fetch();
     }
     catch (const std::exception &e)
     {
@@ -120,14 +139,20 @@ bool UsersTable::FindByCondition(const UserRowCond &condition, UserRow &user, st
 {
     try
     {
-        (*sql_) << querries::SelectUserByCondition,
-            soci::use(condition.password), soci::use(condition.email),
-            soci::into(user.id), soci::into(user.name), soci::into(user.secondName),
-            soci::into(user.age), soci::into(*reinterpret_cast<int *>(&user.male)),
-            soci::into(user.interests), soci::into(user.city), soci::into(user.password),
-            soci::into(user.email);
+        soci::statement st = (sql_->prepare << querries::SelectUserByCondition,
+                              soci::use(condition.password), soci::use(condition.email),
+                              soci::into(user.id), soci::into(user.name), soci::into(user.secondName),
+                              soci::into(user.age), soci::into(*reinterpret_cast<int *>(&user.male)),
+                              soci::into(user.interests), soci::into(user.city), soci::into(user.password),
+                              soci::into(user.email));
 
-        return true;
+        if (!st.execute())
+        {
+            error = messages::NotFound;
+            return false;
+        }
+
+        return st.fetch();
     }
     catch (const std::exception &e)
     {
