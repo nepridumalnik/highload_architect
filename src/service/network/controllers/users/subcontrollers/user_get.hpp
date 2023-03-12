@@ -21,6 +21,15 @@ public:
                        boost::beast::websocket::response_type &res) final;
 
 private:
+    /// @brief Получить пользователя по идентификатору
+    /// @param id Идентификатор
+    /// @param req Запрос
+    /// @param res Ответ
+    void getUserById(const size_t id,
+                     const boost::beast::http::request<boost::beast::http::dynamic_body> &req,
+                     boost::beast::websocket::response_type &res);
+
+private:
     /// @brief Таблица с пользователями
     std::shared_ptr<UsersTable> usersTable_;
 

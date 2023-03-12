@@ -90,14 +90,14 @@ void UserLoginController::unauthorize(const http::request<http::dynamic_body> &r
         return res.result(http::status::bad_request);
     }
 
-    UserAuthRow auth;
+    UserAuthRow auth{};
     std::string error;
 
     if (!authTable_->FindByCondition(object[json_fields::Token], auth, error) ||
         !authTable_->Delete(auth.id, error))
     {
         res.body() = nlohmann::json{{json_fields::Error, error}}.dump();
-        return res.result(http::status::bad_request);
+        return res.result(http::status::not_found);
     }
 }
 
@@ -118,7 +118,7 @@ void UserLoginController::authenticate(const http::request<http::dynamic_body> &
     if (!authTable_->FindByCondition(object[json_fields::Token], auth, error))
     {
         res.body() = nlohmann::json{{json_fields::Error, error}}.dump();
-        return res.result(http::status::bad_request);
+        return res.result(http::status::not_found);
     }
 
     static const std::string authorized = nlohmann::json{{json_fields::Status, json_fields::Authorized}}.dump();

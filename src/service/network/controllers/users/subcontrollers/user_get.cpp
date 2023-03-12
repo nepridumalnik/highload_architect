@@ -41,16 +41,23 @@ bool UserGetController::HandleRequest(const std::string &route,
     const std::string substring = route.substr(route_.size() + 1);
     const size_t id = std::stoull(substring);
 
-    UserRow user{};
-    std::string error;
-    if (usersTable_->FindById(id, user, error))
-    {
-        res.body() = user.ToJson();
-    }
-    else
-    {
-        res.body() = nlohmann::json{{json_fields::Error, error}}.dump();
-    }
+    getUserById(id, req, res);
 
     return true;
+}
+
+void UserGetController::getUserById(const size_t id,
+                                    const http::request<http::dynamic_body> &req,
+                                    websocket::response_type &res)
+{
+    UserRow user{};
+    std::string error;
+
+    if (!usersTable_->FindById(id, user, error))
+    {
+        res.body() = nlohmann::json{{json_fields::Error, error}}.dump();
+        return res.result(http::status::not_found);
+    }
+
+    res.body() = user.ToJson();
 }
