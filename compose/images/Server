@@ -1,0 +1,15 @@
+FROM debian:bullseye AS build
+
+WORKDIR /build
+
+RUN apt update
+RUN apt install -y python3-pip cmake libsoci-dev
+RUN pip3 install conan==1.59.0
+
+ADD ../.. /build
+RUN mkdir build
+WORKDIR /build/build
+
+RUN conan install ../conan --build=soci
+RUN cmake .. && cmake --build . --parallel
+RUN cpack -G ZIP

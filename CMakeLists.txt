@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(thrust_test)
+project(highload_server)
 
 include(cmake/configure.cmake)
 include(cmake/package.cmake)

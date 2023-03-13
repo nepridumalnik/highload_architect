@@ -1,6 +1,14 @@
 version: '3.9'
 
 services:
+  # Сервер
+  server:
+    build:
+      context: ..
+      dockerfile: compose/images/Server
+    volumes:
+      - ./:/build
+    working_dir: /build
   # База данных
   db:
     image: mysql
