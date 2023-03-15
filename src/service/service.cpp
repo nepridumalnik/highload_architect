@@ -10,7 +10,7 @@
 #include <boost/thread.hpp>
 #include <boost/asio.hpp>
 
-static const std::string ConnectionInfo = "host=localhost port=3306 dbname=main_database user=root password===PaSsWoRd==";
+static const std::string ConnectionInfo = "host=mysql port=3306 dbname=main_database user=root password===PaSsWoRd==";
 
 Service::Service()
 {

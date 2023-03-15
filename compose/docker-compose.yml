@@ -5,6 +5,8 @@ services:
   db:
     image: mysql
     restart: always
+    container_name: mysql
+    hostname: mysql
     environment:
       MYSQL_ROOT_PASSWORD: ==PaSsWoRd==
       MYSQL_DATABASE: main_database
@@ -23,6 +25,7 @@ services:
 
   # Сервер
   server:
+    hostname: server
     build:
       context: ..
       dockerfile: compose/images/Server
@@ -30,5 +33,7 @@ services:
     volumes:
       - ./:/build
     working_dir: /app
+    ports:
+      - "80:80"
     depends_on:
       - db
