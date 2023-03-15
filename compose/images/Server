@@ -1,3 +1,4 @@
+# Сборщик
 FROM debian:bullseye AS build
 
 WORKDIR /build
@@ -7,9 +8,25 @@ RUN apt install -y python3-pip cmake libsoci-dev
 RUN pip3 install conan==1.59.0
 
 ADD ../.. /build
+RUN rm -rf build
 RUN mkdir build
 WORKDIR /build/build
 
 RUN conan install ../conan --build=soci
 RUN cmake .. && cmake --build . --parallel
-RUN cpack -G ZIP
+RUN mkdir app && cp bin/* app && cp lib/* app
+RUN tar cvf app.tar.gz app
+
+# Сервер
+FROM debian:bullseye AS run
+
+# Зачем-то подтягивается как зависимость, поэтому приходится докачивать
+RUN apt update
+RUN apt install -y libmariadb3
+
+WORKDIR /
+COPY --from=build /build/build/app.tar.gz /
+RUN tar xvf app.tar.gz
+WORKDIR /app
+
+CMD ["./highload_server"]
