@@ -2,6 +2,8 @@
 
 #include <service/resources/messages.hpp>
 
+#include <service/utils/utils.hpp>
+
 #include <soci/transaction.h>
 #include <soci/statement.h>
 #include <soci/session.h>
@@ -59,11 +61,13 @@ bool UsersTable::Insert(const UserRow &user, std::string &error)
 
         soci::transaction transaction{*sql_};
 
+        const std::string tmpPassword = HashMD5(user.password);
+
         soci::statement st = (sql_->prepare << querries::InsertUser,
                               soci::use(user.name), soci::use(user.secondName),
                               soci::use(user.age), soci::use(static_cast<int>(user.male)),
                               soci::use(user.interests), soci::use(user.city),
-                              soci::use(user.password), soci::use(user.email));
+                              soci::use(tmpPassword), soci::use(user.email));
 
         st.execute();
 
@@ -144,8 +148,9 @@ bool UsersTable::FindByCondition(const UserRowCond &condition, UserRow &user, st
 {
     try
     {
+        const std::string tmpPassword = HashMD5(condition.password);
         soci::statement st = (sql_->prepare << querries::SelectUserByCondition,
-                              soci::use(condition.password), soci::use(condition.email),
+                              soci::use(tmpPassword), soci::use(condition.email),
                               soci::into(user.id), soci::into(user.name), soci::into(user.secondName),
                               soci::into(user.age), soci::into(*reinterpret_cast<int *>(&user.male)),
                               soci::into(user.interests), soci::into(user.city), soci::into(user.password),
