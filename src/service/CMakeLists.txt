@@ -8,6 +8,8 @@ set(SOURCE
     utils/utils.cpp
     resources/jsons.cpp
     resources/messages.cpp
+    resources/connection_parameters.cpp
+    settings/settings_reader.cpp
 )
 
 set(LIBRARIES
