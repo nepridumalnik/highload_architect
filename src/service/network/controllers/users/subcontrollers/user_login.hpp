@@ -16,8 +16,8 @@ public:
     /// @brief Конструктор
     /// @param usersTable Таблица пользователей
     /// @param authTable Таблица авторизаций
-    UserLoginController(std::shared_ptr<UsersTable> usersTable,
-                        std::shared_ptr<UsersAuthTable> authTable);
+    explicit UserLoginController(std::shared_ptr<UsersTable> usersTable,
+                                 std::shared_ptr<UsersAuthTable> authTable);
 
     /// @see AbstractController
     bool HandleRequest(const std::string &route,

@@ -8,6 +8,7 @@ set(SOURCE
     controllers/users/subcontrollers/user_get.cpp
     controllers/users/subcontrollers/user_login.cpp
     controllers/users/subcontrollers/user_register.cpp
+    controllers/users/subcontrollers/user_search.cpp
 )
 
 add_library(${TARGET} STATIC ${SOURCE})

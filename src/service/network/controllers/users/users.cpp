@@ -3,6 +3,7 @@
 #include <service/network/controllers/users/subcontrollers/user_get.hpp>
 #include <service/network/controllers/users/subcontrollers/user_login.hpp>
 #include <service/network/controllers/users/subcontrollers/user_register.hpp>
+#include <service/network/controllers/users/subcontrollers/user_search.hpp>
 
 #include <service/database/models/users/users.hpp>
 #include <service/database/models/users/users_auth.hpp>
@@ -17,6 +18,7 @@ UsersController::UsersController(std::shared_ptr<soci::session> sql)
     subcontrollers_.push_back(std::make_unique<UserGetController>(usersTable_));
     subcontrollers_.push_back(std::make_unique<UserRegisterController>(usersTable_));
     subcontrollers_.push_back(std::make_unique<UserLoginController>(usersTable_, authTable_));
+    subcontrollers_.push_back(std::make_unique<UserSearchController>(usersTable_));
 }
 
 bool UsersController::HandleRequest(const std::string &route,

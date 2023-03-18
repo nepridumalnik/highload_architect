@@ -6,12 +6,12 @@
 
 class UsersTable;
 
-/// @brief Контроллер получения пользователей с путём /user/get/:id
-class UserGetController : public AbstractController
+/// @brief Контроллер получения списка пользователей с путём /user/search
+class UserSearchController : public AbstractController
 {
 public:
     /// @brief Конструктор
-    explicit UserGetController(std::shared_ptr<UsersTable> usersTable);
+    explicit UserSearchController(std::shared_ptr<UsersTable> usersTable);
 
     /// @see AbstractController
     bool HandleRequest(const std::string &route,
@@ -19,18 +19,16 @@ public:
                        boost::beast::websocket::response_type &res) final;
 
 private:
-    /// @brief Получить пользователя по идентификатору
-    /// @param id Идентификатор
+    /// @brief Найти пользователей
     /// @param req Запрос
     /// @param res Ответ
-    void getUserById(const size_t id,
-                     const boost::beast::http::request<boost::beast::http::dynamic_body> &req,
+    void searchUsers(const boost::beast::http::request<boost::beast::http::dynamic_body> &req,
                      boost::beast::websocket::response_type &res);
 
 private:
     /// @brief Таблица с пользователями
     std::shared_ptr<UsersTable> usersTable_;
 
-    /// @brief Путь до /user/register
+    /// @brief Путь до /user/search
     static const std::string route_;
 };

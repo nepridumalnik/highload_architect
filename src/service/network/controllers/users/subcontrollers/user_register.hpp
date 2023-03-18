@@ -14,7 +14,7 @@ class UserRegisterController : public AbstractController
 public:
     /// @brief Конструктор
     /// @param usersTable Таблица пользователей
-    UserRegisterController(std::shared_ptr<UsersTable> usersTable);
+    explicit UserRegisterController(std::shared_ptr<UsersTable> usersTable);
 
     /// @see AbstractController
     bool HandleRequest(const std::string &route,
