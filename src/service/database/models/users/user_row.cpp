@@ -44,7 +44,12 @@ bool UserRow::FromJson(const std::string &json)
     return true;
 }
 
-std::string UserRow::ToJson() const
+std::string UserRow::ToString() const
+{
+    return ToJson().dump();
+}
+
+nlohmann::json UserRow::ToJson() const
 {
     nlohmann::json object;
 
@@ -58,7 +63,7 @@ std::string UserRow::ToJson() const
     object[json_fields::Password] = password;
     object[json_fields::Email] = email;
 
-    return object.dump();
+    return object;
 }
 
 std::string UserRow::Tokenize() const

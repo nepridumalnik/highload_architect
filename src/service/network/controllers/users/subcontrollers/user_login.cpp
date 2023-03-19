@@ -115,7 +115,7 @@ void UserLoginController::authenticate(const http::request<http::dynamic_body> &
         return res.result(http::status::bad_request);
     }
 
-    UserAuthRow auth;
+    UserAuthRow auth{};
     std::string error;
 
     if (!authTable_->FindByCondition(object[json_fields::Token], auth, error))

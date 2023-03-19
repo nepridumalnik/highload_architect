@@ -57,4 +57,13 @@ void UserSearchController::searchUsers(const boost::beast::http::request<boost::
         res.body() = nlohmann::json{{json_fields::Error, error}}.dump();
         return res.result(http::status::bad_request);
     }
+
+    nlohmann::json usersJson{};
+
+    for (const UserRow &user : users)
+    {
+        usersJson.push_back(user.ToJson());
+    }
+
+    res.body() = usersJson.dump();
 }

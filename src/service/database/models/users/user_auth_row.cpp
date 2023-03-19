@@ -22,14 +22,19 @@ bool UserAuthRow::FromJson(const std::string &json)
     return true;
 }
 
-std::string UserAuthRow::ToJson() const
+std::string UserAuthRow::ToString() const
+{
+    return ToJson().dump();
+}
+
+nlohmann::json UserAuthRow::ToJson() const
 {
     nlohmann::json object;
 
     object[json_fields::Id] = id;
     object[json_fields::Token] = token;
 
-    return object.dump();
+    return object;
 }
 
 bool UserAuthRow::Validate() const

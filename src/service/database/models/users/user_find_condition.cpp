@@ -22,14 +22,19 @@ bool UserRowCond::FromJson(const std::string &json)
     return true;
 }
 
-std::string UserRowCond::ToJson() const
+std::string UserRowCond::ToString() const
+{
+    return ToJson().dump();
+}
+
+nlohmann::json UserRowCond::ToJson() const
 {
     nlohmann::json object;
 
     object[json_fields::Password] = password;
     object[json_fields::Email] = email;
 
-    return object.dump();
+    return object;
 }
 
 bool UserRowCond::Validate() const

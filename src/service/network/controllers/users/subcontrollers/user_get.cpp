@@ -59,5 +59,5 @@ void UserGetController::getUserById(const size_t id,
         return res.result(http::status::not_found);
     }
 
-    res.body() = user.ToJson();
+    res.body() = user.ToString();
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <nlohmann/json.hpp>
+
 #include <string>
 
 /// @brief Структура, преобразуемая в JSON и обратно
@@ -15,7 +17,11 @@ struct AbstractTableRow
 
     /// @brief Конвертировать в JSON объект
     /// @return JSON объект
-    virtual std::string ToJson() const = 0;
+    virtual nlohmann::json ToJson() const = 0;
+
+    /// @brief Конвертировать в JSON объект
+    /// @return Строка с JSON объектом
+    virtual std::string ToString() const = 0;
 
     /// @brief Валидация структуры
     /// @return True, если всё хорошо
