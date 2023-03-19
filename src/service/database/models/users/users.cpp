@@ -37,7 +37,7 @@ namespace querries
                                                      "FROM Users WHERE Password = :Password AND Email = :Email";
     static const std::string DeleteUser = "DELETE FROM Users WHERE ID = :ID";
     static const std::string SearchUsers = "SELECT ID, Name, SecondName, Age, Male, Interests, City, Password, Email "
-                                           "FROM Users WHERE :Name LIKE Name AND :SecondName LIKE SecondName;";
+                                           "FROM Users WHERE Name LIKE :Name AND SecondName LIKE :SecondName;";
 } // namespace querries
 
 UsersTable::UsersTable(std::shared_ptr<soci::session> sql) : sql_{sql}
