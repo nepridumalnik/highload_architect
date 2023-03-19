@@ -213,9 +213,9 @@ bool UsersTable::SearchByNames(std::vector<UserRow> &users, const std::string &f
             users[counter].age = it->get<int>(3);
             users[counter].male = it->get<int>(4);
             users[counter].interests = it->get<std::string>(5);
-            users[counter].city = it->get<std::string>(5);
-            users[counter].password = it->get<std::string>(6);
-            users[counter].email = it->get<std::string>(7);
+            users[counter].city = it->get<std::string>(6);
+            users[counter].password = it->get<std::string>(7);
+            users[counter].email = it->get<std::string>(8);
             ++counter;
         }
 
