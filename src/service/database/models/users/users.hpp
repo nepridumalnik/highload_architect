@@ -6,6 +6,7 @@
 #include <service/database/models/users/user_find_condition.hpp>
 
 #include <memory>
+#include <vector>
 
 namespace soci
 {
@@ -34,6 +35,13 @@ public:
 
     /// @see AbstractTableModel
     std::shared_ptr<soci::session> GetDatabase() final;
+
+    /// @brief Поиск по имени и фамилии
+    /// @param firstName Имя
+    /// @param secondName Фамилия
+    /// @param error Строка с ошибкой
+    /// @return True, если удачно
+    bool SearchByNames(std::vector<UserRow> &users, const std::string &firstName, const std::string &secondName, std::string &error);
 
 private:
     /// @brief База данных

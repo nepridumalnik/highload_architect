@@ -3,6 +3,7 @@
 #include <service/database/models/users/users.hpp>
 
 #include <service/resources/jsons.hpp>
+#include <service/resources/messages.hpp>
 
 #include <nlohmann/json.hpp>
 
@@ -36,4 +37,24 @@ bool UserSearchController::HandleRequest(const std::string &route, const boost::
 void UserSearchController::searchUsers(const boost::beast::http::request<boost::beast::http::dynamic_body> &req,
                                        boost::beast::websocket::response_type &res)
 {
+    const std::string body = buffers_to_string(req.body().data());
+    const nlohmann::json object = nlohmann::json::parse(body);
+
+    if ((!object.contains(json_fields::FirstName) && !object[json_fields::FirstName].is_string()) ||
+        (!object.contains(json_fields::SecondName) && !object[json_fields::SecondName].is_string()))
+    {
+        res.body() = nlohmann::json{{json_fields::Error, messages::WrongJsonFormat}}.dump();
+        return res.result(http::status::bad_request);
+    }
+
+    const std::string firstName = object[json_fields::FirstName].get<std::string>();
+    const std::string secondName = object[json_fields::SecondName].get<std::string>();
+    std::string error;
+    std::vector<UserRow> users;
+
+    if (!usersTable_->SearchByNames(users, firstName, secondName, error))
+    {
+        res.body() = nlohmann::json{{json_fields::Error, error}}.dump();
+        return res.result(http::status::bad_request);
+    }
 }

@@ -7,6 +7,9 @@
 #include <soci/transaction.h>
 #include <soci/statement.h>
 #include <soci/session.h>
+#include <soci/row-exchange.h>
+#include <soci/rowset.h>
+#include <soci/row.h>
 
 #include <stdexcept>
 #include <iostream>
@@ -33,6 +36,8 @@ namespace querries
     static const std::string SelectUserByCondition = "SELECT DISTINCT ID, Name, SecondName, Age, Male, Interests, City, Password, Email "
                                                      "FROM Users WHERE Password = :Password AND Email = :Email";
     static const std::string DeleteUser = "DELETE FROM Users WHERE ID = :ID";
+    static const std::string SearchUsers = "SELECT ID, Name, SecondName, Age, Male, Interests, City, Password, Email "
+                                           "FROM Users WHERE :Name LIKE Name AND :SecondName LIKE SecondName;";
 } // namespace querries
 
 UsersTable::UsersTable(std::shared_ptr<soci::session> sql) : sql_{sql}
@@ -177,4 +182,49 @@ bool UsersTable::FindByCondition(const UserRowCond &condition, UserRow &user, st
 std::shared_ptr<soci::session> UsersTable::GetDatabase()
 {
     return sql_;
+}
+
+bool UsersTable::SearchByNames(std::vector<UserRow> &users, const std::string &firstName, const std::string &secondName, std::string &error)
+{
+    try
+    {
+        soci::rowset<soci::row> rowset = (sql_->prepare << querries::SearchUsers,
+                                          soci::use(firstName), soci::use(secondName));
+        soci::row row;
+        soci::statement st = (sql_->prepare << querries::SearchUsers,
+                              soci::use(firstName), soci::use(secondName));
+
+        st.exchange_for_rowset(soci::into(row));
+        st.execute(false);
+
+        const size_t distance = std::distance(rowset.begin(), rowset.end());
+        users.clear();
+        users.resize(distance);
+
+        soci::rowset_iterator<soci::row> it(st, row);
+        soci::rowset_iterator<soci::row> end;
+        size_t counter = 0;
+
+        for (; it != end; ++it)
+        {
+            users[counter].name = it->get<std::string>(1);
+            users[counter].id = it->get<int>(0);
+            users[counter].secondName = it->get<std::string>(2);
+            users[counter].age = it->get<int>(3);
+            users[counter].male = it->get<int>(4);
+            users[counter].interests = it->get<std::string>(5);
+            users[counter].city = it->get<std::string>(5);
+            users[counter].password = it->get<std::string>(6);
+            users[counter].email = it->get<std::string>(7);
+            ++counter;
+        }
+
+        return true;
+    }
+    catch (const std::exception &e)
+    {
+        error = e.what();
+    }
+
+    return false;
 }

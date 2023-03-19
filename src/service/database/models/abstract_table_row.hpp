@@ -5,6 +5,9 @@
 /// @brief Структура, преобразуемая в JSON и обратно
 struct AbstractTableRow
 {
+    /// @brief Деструктор
+    virtual ~AbstractTableRow() = default;
+
     /// @brief Получить из JSON объекта
     /// @param json JSON объект
     /// @return True, если удачно
