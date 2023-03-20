@@ -23,7 +23,7 @@ bool UserSearchController::HandleRequest(const std::string &route, const boost::
         return false;
     }
 
-    if (http::verb::get != req.method())
+    if (http::verb::post != req.method())
     {
         res.result(http::status::bad_request);
         return true;
