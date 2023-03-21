@@ -58,6 +58,13 @@ void UserSearchController::searchUsers(const boost::beast::http::request<boost::
         return res.result(http::status::bad_request);
     }
 
+    if (users.empty())
+    {
+        static const std::string empty = "{}";
+        res.body() = empty;
+        return;
+    }
+
     nlohmann::json usersJson{};
 
     for (const UserRow &user : users)
