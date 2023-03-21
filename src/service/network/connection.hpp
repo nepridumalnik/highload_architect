@@ -17,12 +17,12 @@ public:
     Connection(const uint16_t port, callback cb);
 
     /// @brief Получение соединений
-    void operator()();
+    void Run();
 
 private:
     /// @brief Запуск задачи
     /// @param socket Сокет
-    void runTask(boost::asio::ip::tcp::socket socket);
+    void runTask(std::shared_ptr<boost::asio::ip::tcp::socket> socket);
 
 private:
     /// @brief Контекст asio
