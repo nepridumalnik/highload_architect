@@ -1,21 +1,23 @@
 import { check } from 'k6'
 import http from 'k6/http'
 
+const time = '5s'
+
 export let options = {
     stages: [
-        { duration: '10s', target: 1 },
-        { duration: '10s', target: 1 },
-        { duration: '10s', target: 10 },
-        { duration: '10s', target: 10 },
-        { duration: '10s', target: 100 },
-        { duration: '10s', target: 100 },
-        { duration: '10s', target: 1000 },
-        { duration: '10s', target: 1000 },
-        { duration: '10s', target: 100 },
-        { duration: '10s', target: 100 },
-        { duration: '10s', target: 10 },
-        { duration: '10s', target: 10 },
-        { duration: '10s', target: 1 },
+        { duration: time, target: 1 },
+        { duration: time, target: 1 },
+        { duration: time, target: 10 },
+        { duration: time, target: 10 },
+        { duration: time, target: 100 },
+        { duration: time, target: 100 },
+        { duration: time, target: 1000 },
+        { duration: time, target: 1000 },
+        { duration: time, target: 100 },
+        { duration: time, target: 100 },
+        { duration: time, target: 10 },
+        { duration: time, target: 10 },
+        { duration: time, target: 1 },
     ]
 }
 

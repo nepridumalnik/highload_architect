@@ -11,9 +11,6 @@
 #include <soci/connection-pool.h>
 #include <soci/session.h>
 
-#include <boost/thread.hpp>
-#include <boost/asio.hpp>
-
 #include <vector>
 
 std::string GetConnectionInfo()
@@ -57,7 +54,7 @@ std::string GetConnectionInfo()
 
 Service::Service()
 {
-    static constexpr size_t poolSize = 50;
+    static constexpr size_t poolSize = 100;
     const std::string connectionInfo = GetConnectionInfo();
 
     std::shared_ptr<soci::connection_pool> pool = std::make_shared<soci::connection_pool>(poolSize);
