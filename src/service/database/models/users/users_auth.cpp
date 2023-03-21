@@ -4,6 +4,7 @@
 
 #include <service/resources/messages.hpp>
 
+#include <soci/connection-pool.h>
 #include <soci/transaction.h>
 #include <soci/statement.h>
 #include <soci/session.h>
@@ -30,13 +31,14 @@ namespace querries
     static const std::string DeleteUser = "DELETE FROM Tokens WHERE ID = :ID";
 } // namespace querries
 
-UsersAuthTable::UsersAuthTable(std::shared_ptr<UsersTable> userTable)
-    : sql_{userTable->GetDatabase()}
+UsersAuthTable::UsersAuthTable(std::shared_ptr<soci::connection_pool> pool)
+    : pool_{pool}
 {
     try
     {
-        soci::transaction transaction{*sql_};
-        *sql_ << querries::CreateTable;
+        soci::session sql{*pool_};
+        soci::transaction transaction{sql};
+        sql << querries::CreateTable;
         transaction.commit();
     }
     catch (const std::exception &e)
@@ -55,9 +57,10 @@ bool UsersAuthTable::Insert(const UserAuthRow &auth, std::string &error)
             return false;
         }
 
-        soci::transaction transaction{*sql_};
+        soci::session sql{*pool_};
+        soci::transaction transaction{sql};
 
-        soci::statement st = (sql_->prepare << querries::InsertUser,
+        soci::statement st = (sql.prepare << querries::InsertUser,
                               soci::use(auth.id), soci::use(auth.token));
 
         st.execute();
@@ -84,7 +87,8 @@ bool UsersAuthTable::FindById(const size_t id, UserAuthRow &auth, std::string &e
 {
     try
     {
-        soci::statement st = (sql_->prepare << querries::SelectUserById, soci::use(id),
+        soci::session sql{*pool_};
+        soci::statement st = (sql.prepare << querries::SelectUserById, soci::use(id),
                               soci::into(auth.id), soci::into(auth.token));
 
         st.execute(true);
@@ -109,8 +113,9 @@ bool UsersAuthTable::Delete(const size_t id, std::string &error)
 {
     try
     {
-        soci::transaction transaction{*sql_};
-        soci::statement st = (sql_->prepare << querries::DeleteUser, soci::use(id));
+        soci::session sql{*pool_};
+        soci::transaction transaction{sql};
+        soci::statement st = (sql.prepare << querries::DeleteUser, soci::use(id));
 
         st.execute();
 
@@ -136,7 +141,8 @@ bool UsersAuthTable::FindByCondition(const std::string &token, UserAuthRow &auth
 {
     try
     {
-        soci::statement st = (sql_->prepare << querries::SelectUserByCondition,
+        soci::session sql{*pool_};
+        soci::statement st = (sql.prepare << querries::SelectUserByCondition,
                               soci::use(token), soci::into(auth.id), soci::into(auth.token));
 
         st.execute(true);
@@ -157,7 +163,7 @@ bool UsersAuthTable::FindByCondition(const std::string &token, UserAuthRow &auth
     return false;
 }
 
-std::shared_ptr<soci::session> UsersAuthTable::GetDatabase()
+std::shared_ptr<soci::connection_pool> UsersAuthTable::GetPool()
 {
-    return sql_;
+    return pool_;
 }

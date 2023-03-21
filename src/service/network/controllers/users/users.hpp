@@ -12,7 +12,7 @@ class UsersAuthTable;
 
 namespace soci
 {
-    class session;
+    class connection_pool;
 } // namespace soci
 
 /// @brief Контроллер пользователей
@@ -20,7 +20,7 @@ class UsersController : public AbstractController
 {
 public:
     /// @brief Конструктор
-    UsersController(std::shared_ptr<soci::session> sql);
+    UsersController(std::shared_ptr<soci::connection_pool> pool);
 
     /// @see AbstractController
     bool HandleRequest(const std::string &route,

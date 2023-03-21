@@ -11,16 +11,17 @@ class UsersTable;
 
 namespace soci
 {
-    class session;
+    class connection_pool;
 } // namespace soci
 
 /// @brief Класс, управляющий таблицей с авторизациями пользователей
-class UsersAuthTable : public AbstractTableModel<UserAuthRow, const std::string &, std::shared_ptr<soci::session>>
+class UsersAuthTable
+    : public AbstractTableModel<UserAuthRow, const std::string &, std::shared_ptr<soci::connection_pool>>
 {
 public:
     /// @brief Конструктор
-    /// @param sql База данных с пользовательской таблицей, от которой зависит эта таблица
-    explicit UsersAuthTable(std::shared_ptr<UsersTable> userTable);
+    /// @param pool База данных с пользовательской таблицей, от которой зависит эта таблица
+    explicit UsersAuthTable(std::shared_ptr<soci::connection_pool> pool);
 
     /// @see AbstractTableModel
     bool Insert(const UserAuthRow &auth, std::string &error) final;
@@ -35,9 +36,9 @@ public:
     bool Delete(const size_t id, std::string &error) final;
 
     /// @see AbstractTableModel
-    std::shared_ptr<soci::session> GetDatabase() final;
+    std::shared_ptr<soci::connection_pool> GetPool() final;
 
 private:
-    /// @brief База данных
-    std::shared_ptr<soci::session> sql_;
+    /// @brief Пул соединений
+    std::shared_ptr<soci::connection_pool> pool_;
 };

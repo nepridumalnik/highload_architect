@@ -8,12 +8,14 @@
 #include <service/database/models/users/users.hpp>
 #include <service/database/models/users/users_auth.hpp>
 
+#include <soci/connection-pool.h>
+
 using namespace boost::beast;
 
-UsersController::UsersController(std::shared_ptr<soci::session> sql)
+UsersController::UsersController(std::shared_ptr<soci::connection_pool> pool)
 {
-    usersTable_ = std::make_shared<UsersTable>(sql);
-    authTable_ = std::make_shared<UsersAuthTable>(usersTable_);
+    usersTable_ = std::make_shared<UsersTable>(pool);
+    authTable_ = std::make_shared<UsersAuthTable>(pool);
 
     subcontrollers_.push_back(std::make_unique<UserGetController>(usersTable_));
     subcontrollers_.push_back(std::make_unique<UserRegisterController>(usersTable_));

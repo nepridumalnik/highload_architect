@@ -40,6 +40,6 @@ struct AbstractTableModel
     virtual bool Delete(const size_t id, std::string &error) = 0;
 
     /// @brief Получить родительскую базу данных
-    /// @return База данных
-    virtual Db GetDatabase() = 0;
+    /// @return Пул соединений
+    virtual Db GetPool() = 0;
 };

@@ -6,6 +6,7 @@
 
 #include <soci/transaction.h>
 #include <soci/statement.h>
+#include <soci/connection-pool.h>
 #include <soci/session.h>
 #include <soci/row-exchange.h>
 #include <soci/rowset.h>
@@ -40,12 +41,13 @@ namespace querries
                                            "FROM Users WHERE Name LIKE :Name AND SecondName LIKE :SecondName;";
 } // namespace querries
 
-UsersTable::UsersTable(std::shared_ptr<soci::session> sql) : sql_{sql}
+UsersTable::UsersTable(std::shared_ptr<soci::connection_pool> pool) : pool_{pool}
 {
     try
     {
-        soci::transaction transaction{*sql_};
-        *sql_ << querries::CreateTable;
+        soci::session sql{*pool_};
+        soci::transaction transaction{sql};
+        sql << querries::CreateTable;
         transaction.commit();
     }
     catch (const std::exception &e)
@@ -64,11 +66,12 @@ bool UsersTable::Insert(const UserRow &user, std::string &error)
             return false;
         }
 
-        soci::transaction transaction{*sql_};
+        soci::session sql{*pool_};
+        soci::transaction transaction{sql};
 
         const std::string tmpPassword = HashMD5(user.password);
 
-        soci::statement st = (sql_->prepare << querries::InsertUser,
+        soci::statement st = (sql.prepare << querries::InsertUser,
                               soci::use(user.name), soci::use(user.secondName),
                               soci::use(user.age), soci::use(static_cast<int>(user.male)),
                               soci::use(user.interests), soci::use(user.city),
@@ -98,7 +101,8 @@ bool UsersTable::FindById(const size_t id, UserRow &user, std::string &error)
 {
     try
     {
-        soci::statement st = (sql_->prepare << querries::SelectUserById, soci::use(id),
+        soci::session sql{*pool_};
+        soci::statement st = (sql.prepare << querries::SelectUserById, soci::use(id),
                               soci::into(user.id), soci::into(user.name),
                               soci::into(user.secondName), soci::into(user.age),
                               soci::into(*reinterpret_cast<int *>(&user.male)), soci::into(user.interests),
@@ -126,8 +130,9 @@ bool UsersTable::Delete(const size_t id, std::string &error)
 {
     try
     {
-        soci::transaction transaction{*sql_};
-        soci::statement st = (sql_->prepare << querries::DeleteUser, soci::use(id));
+        soci::session sql{*pool_};
+        soci::transaction transaction{sql};
+        soci::statement st = (sql.prepare << querries::DeleteUser, soci::use(id));
 
         st.execute();
 
@@ -154,7 +159,8 @@ bool UsersTable::FindByCondition(const UserRowCond &condition, UserRow &user, st
     try
     {
         const std::string tmpPassword = HashMD5(condition.password);
-        soci::statement st = (sql_->prepare << querries::SelectUserByCondition,
+        soci::session sql{*pool_};
+        soci::statement st = (sql.prepare << querries::SelectUserByCondition,
                               soci::use(tmpPassword), soci::use(condition.email),
                               soci::into(user.id), soci::into(user.name), soci::into(user.secondName),
                               soci::into(user.age), soci::into(*reinterpret_cast<int *>(&user.male)),
@@ -179,19 +185,20 @@ bool UsersTable::FindByCondition(const UserRowCond &condition, UserRow &user, st
     return false;
 }
 
-std::shared_ptr<soci::session> UsersTable::GetDatabase()
+std::shared_ptr<soci::connection_pool> UsersTable::GetPool()
 {
-    return sql_;
+    return pool_;
 }
 
 bool UsersTable::SearchByNames(std::vector<UserRow> &users, const std::string &firstName, const std::string &secondName, std::string &error)
 {
     try
     {
-        soci::rowset<soci::row> rowset = (sql_->prepare << querries::SearchUsers,
+        soci::session sql{*pool_};
+        soci::rowset<soci::row> rowset = (sql.prepare << querries::SearchUsers,
                                           soci::use(firstName), soci::use(secondName));
         soci::row row;
-        soci::statement st = (sql_->prepare << querries::SearchUsers,
+        soci::statement st = (sql.prepare << querries::SearchUsers,
                               soci::use(firstName), soci::use(secondName));
 
         st.exchange_for_rowset(soci::into(row));

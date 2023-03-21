@@ -8,6 +8,7 @@
 #include <service/settings/settings_reader.hpp>
 
 #include <soci/mysql/soci-mysql.h>
+#include <soci/connection-pool.h>
 #include <soci/session.h>
 
 #include <boost/thread.hpp>
@@ -56,10 +57,17 @@ std::string GetConnectionInfo()
 
 Service::Service()
 {
+    static constexpr size_t poolSize = 50;
     const std::string connectionInfo = GetConnectionInfo();
 
-    sql_ = std::make_shared<soci::session>(soci::mysql, connectionInfo);
-    router_.AddController(std::make_unique<UsersController>(sql_));
+    std::shared_ptr<soci::connection_pool> pool = std::make_shared<soci::connection_pool>(poolSize);
+
+    for (size_t i = 0; i < poolSize; ++i)
+    {
+        pool->at(i).open(soci::mysql, connectionInfo);
+    }
+
+    router_.AddController(std::make_unique<UsersController>(pool));
 }
 
 void Service::Run()

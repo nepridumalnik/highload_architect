@@ -16,9 +16,12 @@ link_directories(/usr/local/lib64)
 if(WIN32)
     message("-- Setting up for Windows")
     add_compile_definitions(_WIN32_WINNT=0x0601)
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ignore:4099")
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /ignore:4099")
-    set(CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} /ignore:4099")
+
+    if((CMAKE_CXX_COMPILER_ID STREQUAL "MSVC"))
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ignore:4099")
+        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /ignore:4099")
+        set(CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} /ignore:4099")
+    endif()
 
     set(SOCI_LIBS
         ${CONAN_LIBS_SOCI}

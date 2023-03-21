@@ -4,6 +4,8 @@
 
 #include <service/network/router.hpp>
 
+#include <soci/connection-pool.h>
+
 #include <memory>
 
 namespace soci
@@ -22,8 +24,8 @@ public:
     EXPORT void Run();
 
 private:
-    /// @brief База данных
-    std::shared_ptr<soci::session> sql_;
+    /// @brief Пул соединений
+    std::shared_ptr<soci::connection_pool> pool_;
 
     /// @brief Маршрутизатор
     Router router_;

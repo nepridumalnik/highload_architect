@@ -10,16 +10,16 @@
 
 namespace soci
 {
-    class session;
+    class connection_pool;
 } // namespace soci
 
 /// @brief Класс, управляющий таблицей с пользователями
-class UsersTable : public AbstractTableModel<UserRow, UserRowCond, std::shared_ptr<soci::session>>
+class UsersTable : public AbstractTableModel<UserRow, UserRowCond, std::shared_ptr<soci::connection_pool>>
 {
 public:
     /// @brief Конструктор
-    /// @param sql База данных
-    explicit UsersTable(std::shared_ptr<soci::session> sql);
+    /// @param pool Пул соединений
+    explicit UsersTable(std::shared_ptr<soci::connection_pool> pool_);
 
     /// @see AbstractTableModel
     bool Insert(const UserRow &user, std::string &error) final;
@@ -34,7 +34,7 @@ public:
     bool Delete(const size_t id, std::string &error) final;
 
     /// @see AbstractTableModel
-    std::shared_ptr<soci::session> GetDatabase() final;
+    std::shared_ptr<soci::connection_pool> GetPool() final;
 
     /// @brief Поиск по имени и фамилии
     /// @param firstName Имя
@@ -44,6 +44,6 @@ public:
     bool SearchByNames(std::vector<UserRow> &users, const std::string &firstName, const std::string &secondName, std::string &error);
 
 private:
-    /// @brief База данных
-    std::shared_ptr<soci::session> sql_;
+    /// @brief Пул соединений
+    std::shared_ptr<soci::connection_pool> pool_;
 };
