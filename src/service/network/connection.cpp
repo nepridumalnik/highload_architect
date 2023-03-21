@@ -18,7 +18,7 @@ void Connection::operator()()
     } while (true);
 }
 
-void Connection::runTask(boost::asio::ip::tcp::socket &&socket)
+void Connection::runTask(boost::asio::ip::tcp::socket socket)
 {
     try
     {

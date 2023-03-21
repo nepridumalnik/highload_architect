@@ -22,7 +22,7 @@ public:
 private:
     /// @brief Запуск задачи
     /// @param socket Сокет
-    void runTask(boost::asio::ip::tcp::socket &&socket);
+    void runTask(boost::asio::ip::tcp::socket socket);
 
 private:
     /// @brief Контекст asio
