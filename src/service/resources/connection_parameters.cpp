@@ -8,7 +8,7 @@ namespace connection_parameters
     const std::string DefaultHost = "mysql";
     const std::string Port = "port";
     const std::string DefaultPort = "3306";
-    const std::string Database = "dbname";
+    const std::string Database = "db";
     const std::string DefaultDatabase = "main_database";
     const std::string User = "user";
     const std::string DefaultUser = "root";

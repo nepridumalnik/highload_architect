@@ -25,12 +25,12 @@ namespace querries
                                            "INDEX (ID)\n"
                                            ") ENGINE=InnoDB CHARSET=utf8;";
     static const std::string InsertUser = "INSERT INTO Tokens(ID, Token) "
-                                          "VALUES(:ID, :Token)";
+                                          "VALUES(?, ?)";
     static const std::string SelectUserById = "SELECT DISTINCT ID, Token "
-                                              "FROM Tokens WHERE ID = :ID";
+                                              "FROM Tokens WHERE ID = ?";
     static const std::string SelectUserByCondition = "SELECT DISTINCT ID, Token "
-                                                     "FROM Tokens WHERE Token = :Token";
-    static const std::string DeleteUser = "DELETE FROM Tokens WHERE ID = :ID";
+                                                     "FROM Tokens WHERE Token = ?";
+    static const std::string DeleteUser = "DELETE FROM Tokens WHERE ID = ?";
 } // namespace querries
 
 UsersAuthTable::UsersAuthTable(std::shared_ptr<Poco::Data::SessionPool> pool)

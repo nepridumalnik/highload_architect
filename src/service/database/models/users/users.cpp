@@ -4,8 +4,10 @@
 
 #include <service/utils/utils.hpp>
 
+#include <Poco/Data/MySQL/MySQLException.h>
 #include <Poco/Data/SessionPool.h>
 #include <Poco/Data/Transaction.h>
+#include <Poco/Data/Connector.h>
 #include <Poco/Data/Statement.h>
 
 #include <stdexcept>
@@ -30,14 +32,14 @@ namespace querries
                                            "INDEX (Name, Email)\n"
                                            ") ENGINE=InnoDB CHARSET=utf8";
     static const std::string InsertUser = "INSERT INTO Users(Name, SecondName, Age, Male, Interests, City, Password, Email) "
-                                          "VALUES(:Name, :SecondName, :Age, :Male, :Interests, :City, :Password, :Email)";
+                                          "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
     static const std::string SelectUserById = "SELECT DISTINCT ID, Name, SecondName, Age, Male, Interests, City, Password, Email "
-                                              "FROM Users WHERE ID = :ID";
+                                              "FROM Users WHERE ID = ?";
     static const std::string SelectUserByCondition = "SELECT DISTINCT ID, Name, SecondName, Age, Male, Interests, City, Password, Email "
-                                                     "FROM Users WHERE Password = :Password AND Email = :Email";
-    static const std::string DeleteUser = "DELETE FROM Users WHERE ID = :ID";
+                                                     "FROM Users WHERE Password = ? AND Email = ?";
+    static const std::string DeleteUser = "DELETE FROM Users WHERE ID = ?";
     static const std::string SearchUsers = "SELECT ID, Name, SecondName, Age, Male, Interests, City, Password, Email "
-                                           "FROM Users WHERE Name LIKE :Name AND SecondName LIKE :SecondName;";
+                                           "FROM Users WHERE Name LIKE ? AND SecondName LIKE ?;";
 } // namespace querries
 
 UsersTable::UsersTable(std::shared_ptr<Poco::Data::SessionPool> pool) : pool_{pool}
@@ -100,19 +102,29 @@ bool UsersTable::FindById(const size_t id, UserRow &user, std::string &error)
     try
     {
         Session sql = pool_->get();
-        // sql << querries::SelectUserById, use(id),
-        //     into(user.id), into(user.name),
-        //     into(user.secondName), into(user.age),
-        //     into(*reinterpret_cast<int *>(&user.male)), into(user.interests),
-        //     into(user.city), into(user.password), into(user.email);
+        Statement statement{sql};
 
-        // if (st.get_affected_rows() == 0)
-        // {
-        //     error = messages::NotFound;
-        //     return false;
-        // }
+        size_t tmpId = id;
+
+        statement << querries::SelectUserById, use(tmpId),
+            into(user.id), into(user.name),
+            into(user.secondName), into(user.age),
+            into(*(reinterpret_cast<int *>(&user.male))), into(user.interests),
+            into(user.city), into(user.password), into(user.email);
+
+        const size_t res = statement.execute();
+
+        if (res != 1)
+        {
+            error = messages::NotFound;
+            return false;
+        }
 
         return true;
+    }
+    catch (const Poco::Data::MySQL::MySQLException &e)
+    {
+        error = e.displayText();
     }
     catch (const std::exception &e)
     {
