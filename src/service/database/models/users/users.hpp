@@ -41,7 +41,7 @@ public:
     /// @param secondName Фамилия
     /// @param error Строка с ошибкой
     /// @return True, если удачно
-    bool SearchByNames(std::vector<UserRow> &users, const std::string &firstName, const std::string &secondName, std::string &error);
+    bool SearchByNames(std::vector<UserRow> &users, std::string &firstName, std::string &secondName, std::string &error);
 
 private:
     /// @brief Пул соединений

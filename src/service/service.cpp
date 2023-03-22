@@ -8,7 +8,6 @@
 #include <service/settings/settings_reader.hpp>
 
 #include <Poco/Data/MySQL/Connector.h>
-#include <Poco/Data/MySQL/MySQLException.h>
 #include <Poco/Data/SessionFactory.h>
 #include <Poco/Data/SessionPool.h>
 #include <Poco/Data/Session.h>

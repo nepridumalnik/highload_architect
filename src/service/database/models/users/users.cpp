@@ -4,7 +4,6 @@
 
 #include <service/utils/utils.hpp>
 
-#include <Poco/Data/MySQL/MySQLException.h>
 #include <Poco/Data/SessionPool.h>
 #include <Poco/Data/Transaction.h>
 #include <Poco/Data/Connector.h>
@@ -72,11 +71,10 @@ bool UsersTable::Insert(UserRow &user, std::string &error)
         Statement statement{sql};
 
         std::string tmpPassword = HashMD5(user.password);
-        int male = static_cast<int>(user.male);
 
         statement << querries::InsertUser,
             use(user.name), use(user.secondName),
-            use(user.age), use(male),
+            use(user.age), into(*reinterpret_cast<int *>(&user.male)),
             use(user.interests), use(user.city),
             use(tmpPassword), use(user.email);
 
@@ -122,10 +120,6 @@ bool UsersTable::FindById(size_t id, UserRow &user, std::string &error)
         }
 
         return true;
-    }
-    catch (const Poco::Data::MySQL::MySQLException &e)
-    {
-        error = e.displayText();
     }
     catch (const std::exception &e)
     {
@@ -201,41 +195,27 @@ std::shared_ptr<Poco::Data::SessionPool> UsersTable::GetPool()
     return pool_;
 }
 
-bool UsersTable::SearchByNames(std::vector<UserRow> &users, const std::string &firstName, const std::string &secondName, std::string &error)
+bool UsersTable::SearchByNames(std::vector<UserRow> &users, std::string &firstName, std::string &secondName, std::string &error)
 {
     try
     {
-        // Session sql = pool_->get();
-        // soci::rowset<soci::row> rowset = (sql.prepare << querries::SearchUsers,
-        //                                   use(firstName), use(secondName));
-        // soci::row row;
-        // soci::statement st = (sql.prepare << querries::SearchUsers,
-        //                       use(firstName), use(secondName));
+        users.clear();
+        UserRow user{};
 
-        // st.exchange_for_rowset(into(row));
-        // st.execute(false);
+        Session sql = pool_->get();
+        Statement statement{sql};
+        statement << querries::SearchUsers,
+            use(firstName), use(secondName),
+            into(user.id), into(user.name), into(user.secondName),
+            into(user.age), into(*reinterpret_cast<int *>(&user.male)),
+            into(user.interests), into(user.city), into(user.password),
+            into(user.email), range(0, 1);
 
-        // const size_t distance = std::distance(rowset.begin(), rowset.end());
-        // users.clear();
-        // users.resize(distance);
-
-        // soci::rowset_iterator<soci::row> it(st, row);
-        // soci::rowset_iterator<soci::row> end;
-        // size_t counter = 0;
-
-        // for (; it != end; ++it)
-        // {
-        //     users[counter].name = it->get<std::string>(1);
-        //     users[counter].id = it->get<int>(0);
-        //     users[counter].secondName = it->get<std::string>(2);
-        //     users[counter].age = it->get<int>(3);
-        //     users[counter].male = it->get<int>(4);
-        //     users[counter].interests = it->get<std::string>(5);
-        //     users[counter].city = it->get<std::string>(6);
-        //     users[counter].password = it->get<std::string>(7);
-        //     users[counter].email = it->get<std::string>(8);
-        //     ++counter;
-        // }
+        while (!statement.done())
+        {
+            statement.execute();
+            users.push_back(std::move(user));
+        }
 
         return true;
     }

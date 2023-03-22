@@ -47,8 +47,8 @@ void UserSearchController::searchUsers(const boost::beast::http::request<boost::
         return res.result(http::status::bad_request);
     }
 
-    const std::string firstName = object[json_fields::FirstName].get<std::string>();
-    const std::string secondName = object[json_fields::SecondName].get<std::string>();
+    std::string firstName = object[json_fields::FirstName].get<std::string>();
+    std::string secondName = object[json_fields::SecondName].get<std::string>();
     std::string error;
     std::vector<UserRow> users;
 
