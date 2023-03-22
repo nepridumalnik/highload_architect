@@ -61,14 +61,17 @@ bool UsersAuthTable::Insert(UserAuthRow &auth, std::string &error)
 
         Session sql = pool_->get();
         Transaction transaction{sql};
+        Statement statement{sql};
 
-        // sql << querries::InsertUser, use(auth.id), use(auth.token);
+        statement << querries::InsertUser, use(auth.id), use(auth.token);
 
-        // if (st.get_affected_rows() == 0)
-        // {
-        //     error = messages::InsertionError;
-        //     return false;
-        // }
+        const size_t res = statement.execute();
+
+        if (res != 1)
+        {
+            error = messages::InsertionError;
+            return false;
+        }
 
         transaction.commit();
 
@@ -82,19 +85,22 @@ bool UsersAuthTable::Insert(UserAuthRow &auth, std::string &error)
     return false;
 }
 
-bool UsersAuthTable::FindById(const size_t id, UserAuthRow &auth, std::string &error)
+bool UsersAuthTable::FindById(size_t id, UserAuthRow &auth, std::string &error)
 {
     try
     {
         Session sql = pool_->get();
-        // sql << querries::SelectUserById, use(id),
-        //     into(auth.id), into(auth.token);
+        Statement statement{sql};
+        statement << querries::SelectUserById, use(id),
+            into(auth.id), into(auth.token);
 
-        // if (st.get_affected_rows() == 0)
-        // {
-        //     error = messages::NotFound;
-        //     return false;
-        // }
+        const size_t res = statement.execute();
+
+        if (res != 1)
+        {
+            error = messages::NotFound;
+            return false;
+        }
 
         return true;
     }
@@ -106,19 +112,22 @@ bool UsersAuthTable::FindById(const size_t id, UserAuthRow &auth, std::string &e
     return false;
 }
 
-bool UsersAuthTable::Delete(const size_t id, std::string &error)
+bool UsersAuthTable::Delete(size_t id, std::string &error)
 {
     try
     {
         Session sql = pool_->get();
         Transaction transaction{sql};
-        // sql << querries::DeleteUser, use(id);
+        Statement statement{sql};
+        statement << querries::DeleteUser, use(id);
 
-        // if (st.get_affected_rows() == 0)
-        // {
-        //     error = messages::DeletionError;
-        //     return false;
-        // }
+        const size_t res = statement.execute();
+
+        if (res != 1)
+        {
+            error = messages::DeletionError;
+            return false;
+        }
 
         transaction.commit();
 
@@ -137,14 +146,17 @@ bool UsersAuthTable::FindByCondition(std::string &token, UserAuthRow &auth, std:
     try
     {
         Session sql = pool_->get();
-        // sql << querries::SelectUserByCondition,
-        //     use(token), into(auth.id), into(auth.token);
+        Statement statement{sql};
+        statement << querries::SelectUserByCondition,
+            use(token), into(auth.id), into(auth.token);
 
-        // if (st.get_affected_rows() == 0)
-        // {
-        //     error = messages::NotFound;
-        //     return false;
-        // }
+        const size_t res = statement.execute();
+
+        if (res != 1)
+        {
+            error = messages::NotFound;
+            return false;
+        }
 
         return true;
     }

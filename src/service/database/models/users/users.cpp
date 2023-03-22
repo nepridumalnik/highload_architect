@@ -146,7 +146,7 @@ bool UsersTable::Delete(size_t id, std::string &error)
 
         const size_t res = statement.execute();
 
-        if (res != 0)
+        if (res != 1)
         {
             error = messages::DeletionError;
             return false;
@@ -168,20 +168,23 @@ bool UsersTable::FindByCondition(UserRowCond &condition, UserRow &user, std::str
 {
     try
     {
-        const std::string tmpPassword = HashMD5(condition.password);
+        std::string tmpPassword = HashMD5(condition.password);
         Session sql = pool_->get();
-        // sql << querries::SelectUserByCondition,
-        //     use(tmpPassword), use(condition.email),
-        //     into(user.id), into(user.name), into(user.secondName),
-        //     into(user.age), into(*reinterpret_cast<int *>(&user.male)),
-        //     into(user.interests), into(user.city), into(user.password),
-        //     into(user.email);
+        Statement statement{sql};
+        statement << querries::SelectUserByCondition,
+            use(tmpPassword), use(condition.email),
+            into(user.id), into(user.name), into(user.secondName),
+            into(user.age), into(*reinterpret_cast<int *>(&user.male)),
+            into(user.interests), into(user.city), into(user.password),
+            into(user.email);
 
-        // if (st.get_affected_rows() == 0)
-        // {
-        //     error = messages::NotFound;
-        //     return false;
-        // }
+        const size_t res = statement.execute();
+
+        if (res != 1)
+        {
+            error = messages::NotFound;
+            return false;
+        }
 
         return true;
     }
