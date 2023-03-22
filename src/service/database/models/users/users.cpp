@@ -58,7 +58,7 @@ UsersTable::UsersTable(std::shared_ptr<Poco::Data::SessionPool> pool) : pool_{po
     }
 }
 
-bool UsersTable::Insert(const UserRow &user, std::string &error)
+bool UsersTable::Insert(UserRow &user, std::string &error)
 {
     try
     {
@@ -69,21 +69,24 @@ bool UsersTable::Insert(const UserRow &user, std::string &error)
 
         Session sql = pool_->get();
         Transaction transaction{sql};
+        Statement statement{sql};
 
-        const std::string tmpPassword = HashMD5(user.password);
-        const int male = static_cast<int>(user.male);
+        std::string tmpPassword = HashMD5(user.password);
+        int male = static_cast<int>(user.male);
 
-        // sql << querries::InsertUser,
-        //     use(user.name), use(user.secondName),
-        //     use(user.age), use(male),
-        //     use(user.interests), use(user.city),
-        //     use(tmpPassword), use(user.email);
+        statement << querries::InsertUser,
+            use(user.name), use(user.secondName),
+            use(user.age), use(male),
+            use(user.interests), use(user.city),
+            use(tmpPassword), use(user.email);
 
-        // if (st.get_affected_rows() == 0)
-        // {
-        //     error = messages::InsertionError;
-        //     return false;
-        // }
+        const size_t res = statement.execute();
+
+        if (res != 1)
+        {
+            error = messages::InsertionError;
+            return false;
+        }
 
         transaction.commit();
 
@@ -97,16 +100,14 @@ bool UsersTable::Insert(const UserRow &user, std::string &error)
     return false;
 }
 
-bool UsersTable::FindById(const size_t id, UserRow &user, std::string &error)
+bool UsersTable::FindById(size_t id, UserRow &user, std::string &error)
 {
     try
     {
         Session sql = pool_->get();
         Statement statement{sql};
 
-        size_t tmpId = id;
-
-        statement << querries::SelectUserById, use(tmpId),
+        statement << querries::SelectUserById, use(id),
             into(user.id), into(user.name),
             into(user.secondName), into(user.age),
             into(*(reinterpret_cast<int *>(&user.male))), into(user.interests),
@@ -134,21 +135,22 @@ bool UsersTable::FindById(const size_t id, UserRow &user, std::string &error)
     return false;
 }
 
-bool UsersTable::Delete(const size_t id, std::string &error)
+bool UsersTable::Delete(size_t id, std::string &error)
 {
     try
     {
         Session sql = pool_->get();
         Transaction transaction{sql};
-        // sql << querries::DeleteUser, use(id);
+        Statement statement{sql};
+        statement << querries::DeleteUser, use(id);
 
-        // st.execute();
+        const size_t res = statement.execute();
 
-        // if (st.get_affected_rows() == 0)
-        // {
-        //     error = messages::DeletionError;
-        //     return false;
-        // }
+        if (res != 0)
+        {
+            error = messages::DeletionError;
+            return false;
+        }
 
         transaction.commit();
 
@@ -162,7 +164,7 @@ bool UsersTable::Delete(const size_t id, std::string &error)
     return false;
 }
 
-bool UsersTable::FindByCondition(const UserRowCond &condition, UserRow &user, std::string &error)
+bool UsersTable::FindByCondition(UserRowCond &condition, UserRow &user, std::string &error)
 {
     try
     {

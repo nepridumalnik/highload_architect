@@ -16,7 +16,7 @@ namespace Poco::Data
 
 /// @brief Класс, управляющий таблицей с авторизациями пользователей
 class UsersAuthTable
-    : public AbstractTableModel<UserAuthRow, const std::string &, std::shared_ptr<Poco::Data::SessionPool>>
+    : public AbstractTableModel<UserAuthRow, std::string &, std::shared_ptr<Poco::Data::SessionPool>>
 {
 public:
     /// @brief Конструктор
@@ -24,16 +24,16 @@ public:
     explicit UsersAuthTable(std::shared_ptr<Poco::Data::SessionPool> pool);
 
     /// @see AbstractTableModel
-    bool Insert(const UserAuthRow &auth, std::string &error) final;
+    bool Insert(UserAuthRow &auth, std::string &error) final;
 
     /// @see AbstractTableModel
-    bool FindById(const size_t id, UserAuthRow &auth, std::string &error) final;
+    bool FindById(size_t id, UserAuthRow &auth, std::string &error) final;
 
     /// @see AbstractTableModel
-    bool FindByCondition(const std::string &condition, UserAuthRow &auth, std::string &error) final;
+    bool FindByCondition(std::string &condition, UserAuthRow &auth, std::string &error) final;
 
     /// @see AbstractTableModel
-    bool Delete(const size_t id, std::string &error) final;
+    bool Delete(size_t id, std::string &error) final;
 
     /// @see AbstractTableModel
     std::shared_ptr<Poco::Data::SessionPool> GetPool() final;

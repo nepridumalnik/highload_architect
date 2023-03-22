@@ -83,7 +83,7 @@ void UserLoginController::unauthorize(const http::request<http::dynamic_body> &r
                                       boost::beast::websocket::response_type &res)
 {
     const std::string body = buffers_to_string(req.body().data());
-    const nlohmann::json object = nlohmann::json::parse(body);
+    nlohmann::json object = nlohmann::json::parse(body);
 
     if (!object.contains(json_fields::Token) && !object[json_fields::Token].is_string())
     {
@@ -92,8 +92,9 @@ void UserLoginController::unauthorize(const http::request<http::dynamic_body> &r
 
     UserAuthRow auth{};
     std::string error;
+    std::string token = object[json_fields::Token].get<std::string>();
 
-    if (!authTable_->FindByCondition(object[json_fields::Token], auth, error) ||
+    if (!authTable_->FindByCondition(token, auth, error) ||
         !authTable_->Delete(auth.id, error))
     {
         res.body() = nlohmann::json{{json_fields::Error, error}}.dump();
@@ -108,7 +109,7 @@ void UserLoginController::authenticate(const http::request<http::dynamic_body> &
                                        websocket::response_type &res)
 {
     const std::string body = buffers_to_string(req.body().data());
-    const nlohmann::json object = nlohmann::json::parse(body);
+    nlohmann::json object = nlohmann::json::parse(body);
 
     if (!object.contains(json_fields::Token) && !object[json_fields::Token].is_string())
     {
@@ -117,8 +118,9 @@ void UserLoginController::authenticate(const http::request<http::dynamic_body> &
 
     UserAuthRow auth{};
     std::string error;
+    std::string token = object[json_fields::Token].get<std::string>();
 
-    if (!authTable_->FindByCondition(object[json_fields::Token], auth, error))
+    if (!authTable_->FindByCondition(token, auth, error))
     {
         res.body() = nlohmann::json{{json_fields::Error, error}}.dump();
         return res.result(http::status::not_found);

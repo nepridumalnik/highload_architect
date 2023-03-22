@@ -50,7 +50,7 @@ UsersAuthTable::UsersAuthTable(std::shared_ptr<Poco::Data::SessionPool> pool)
     }
 }
 
-bool UsersAuthTable::Insert(const UserAuthRow &auth, std::string &error)
+bool UsersAuthTable::Insert(UserAuthRow &auth, std::string &error)
 {
     try
     {
@@ -132,7 +132,7 @@ bool UsersAuthTable::Delete(const size_t id, std::string &error)
     return false;
 }
 
-bool UsersAuthTable::FindByCondition(const std::string &token, UserAuthRow &auth, std::string &error)
+bool UsersAuthTable::FindByCondition(std::string &token, UserAuthRow &auth, std::string &error)
 {
     try
     {

@@ -22,16 +22,16 @@ public:
     explicit UsersTable(std::shared_ptr<Poco::Data::SessionPool> pool_);
 
     /// @see AbstractTableModel
-    bool Insert(const UserRow &user, std::string &error) final;
+    bool Insert(UserRow &user, std::string &error) final;
 
     /// @see AbstractTableModel
-    bool FindById(const size_t id, UserRow &user, std::string &error) final;
+    bool FindById(size_t id, UserRow &user, std::string &error) final;
 
     /// @see AbstractTableModel
-    bool FindByCondition(const UserRowCond &condition, UserRow &user, std::string &error) final;
+    bool FindByCondition(UserRowCond &condition, UserRow &user, std::string &error) final;
 
     /// @see AbstractTableModel
-    bool Delete(const size_t id, std::string &error) final;
+    bool Delete(size_t id, std::string &error) final;
 
     /// @see AbstractTableModel
     std::shared_ptr<Poco::Data::SessionPool> GetPool() final;
