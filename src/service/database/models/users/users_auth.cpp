@@ -4,13 +4,15 @@
 
 #include <service/resources/messages.hpp>
 
-#include <soci/connection-pool.h>
-#include <soci/transaction.h>
-#include <soci/statement.h>
-#include <soci/session.h>
+#include <Poco/Data/SessionPool.h>
+#include <Poco/Data/Transaction.h>
+#include <Poco/Data/Statement.h>
 
 #include <stdexcept>
 #include <iostream>
+
+using namespace Poco::Data::Keywords;
+using namespace Poco::Data;
 
 /// @brief Запросы к MySQL базе данных
 namespace querries
@@ -31,13 +33,13 @@ namespace querries
     static const std::string DeleteUser = "DELETE FROM Tokens WHERE ID = :ID";
 } // namespace querries
 
-UsersAuthTable::UsersAuthTable(std::shared_ptr<soci::connection_pool> pool)
+UsersAuthTable::UsersAuthTable(std::shared_ptr<Poco::Data::SessionPool> pool)
     : pool_{pool}
 {
     try
     {
-        soci::session sql{*pool_};
-        soci::transaction transaction{sql};
+        Session sql = pool_->get();
+        Transaction transaction{sql};
         sql << querries::CreateTable;
         transaction.commit();
     }
@@ -57,19 +59,16 @@ bool UsersAuthTable::Insert(const UserAuthRow &auth, std::string &error)
             return false;
         }
 
-        soci::session sql{*pool_};
-        soci::transaction transaction{sql};
+        Session sql = pool_->get();
+        Transaction transaction{sql};
 
-        soci::statement st = (sql.prepare << querries::InsertUser,
-                              soci::use(auth.id), soci::use(auth.token));
+        // sql << querries::InsertUser, use(auth.id), use(auth.token);
 
-        st.execute();
-
-        if (st.get_affected_rows() == 0)
-        {
-            error = messages::InsertionError;
-            return false;
-        }
+        // if (st.get_affected_rows() == 0)
+        // {
+        //     error = messages::InsertionError;
+        //     return false;
+        // }
 
         transaction.commit();
 
@@ -87,17 +86,15 @@ bool UsersAuthTable::FindById(const size_t id, UserAuthRow &auth, std::string &e
 {
     try
     {
-        soci::session sql{*pool_};
-        soci::statement st = (sql.prepare << querries::SelectUserById, soci::use(id),
-                              soci::into(auth.id), soci::into(auth.token));
+        Session sql = pool_->get();
+        // sql << querries::SelectUserById, use(id),
+        //     into(auth.id), into(auth.token);
 
-        st.execute(true);
-
-        if (st.get_affected_rows() == 0)
-        {
-            error = messages::NotFound;
-            return false;
-        }
+        // if (st.get_affected_rows() == 0)
+        // {
+        //     error = messages::NotFound;
+        //     return false;
+        // }
 
         return true;
     }
@@ -113,17 +110,15 @@ bool UsersAuthTable::Delete(const size_t id, std::string &error)
 {
     try
     {
-        soci::session sql{*pool_};
-        soci::transaction transaction{sql};
-        soci::statement st = (sql.prepare << querries::DeleteUser, soci::use(id));
+        Session sql = pool_->get();
+        Transaction transaction{sql};
+        // sql << querries::DeleteUser, use(id);
 
-        st.execute();
-
-        if (st.get_affected_rows() == 0)
-        {
-            error = messages::DeletionError;
-            return false;
-        }
+        // if (st.get_affected_rows() == 0)
+        // {
+        //     error = messages::DeletionError;
+        //     return false;
+        // }
 
         transaction.commit();
 
@@ -141,17 +136,15 @@ bool UsersAuthTable::FindByCondition(const std::string &token, UserAuthRow &auth
 {
     try
     {
-        soci::session sql{*pool_};
-        soci::statement st = (sql.prepare << querries::SelectUserByCondition,
-                              soci::use(token), soci::into(auth.id), soci::into(auth.token));
+        Session sql = pool_->get();
+        // sql << querries::SelectUserByCondition,
+        //     use(token), into(auth.id), into(auth.token);
 
-        st.execute(true);
-
-        if (st.get_affected_rows() == 0)
-        {
-            error = messages::NotFound;
-            return false;
-        }
+        // if (st.get_affected_rows() == 0)
+        // {
+        //     error = messages::NotFound;
+        //     return false;
+        // }
 
         return true;
     }
@@ -163,7 +156,7 @@ bool UsersAuthTable::FindByCondition(const std::string &token, UserAuthRow &auth
     return false;
 }
 
-std::shared_ptr<soci::connection_pool> UsersAuthTable::GetPool()
+std::shared_ptr<Poco::Data::SessionPool> UsersAuthTable::GetPool()
 {
     return pool_;
 }

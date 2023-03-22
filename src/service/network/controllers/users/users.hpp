@@ -10,17 +10,17 @@
 class UsersTable;
 class UsersAuthTable;
 
-namespace soci
+namespace Poco::Data
 {
-    class connection_pool;
-} // namespace soci
+    class SessionPool;
+} // namespace Poco::Data
 
 /// @brief Контроллер пользователей
 class UsersController : public AbstractController
 {
 public:
     /// @brief Конструктор
-    UsersController(std::shared_ptr<soci::connection_pool> pool);
+    UsersController(std::shared_ptr<Poco::Data::SessionPool> pool);
 
     /// @see AbstractController
     bool HandleRequest(const std::string &route,

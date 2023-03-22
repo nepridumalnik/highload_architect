@@ -26,13 +26,17 @@ class HighloadServer(ConanFile):
             'cmake',
         ]
 
-        self.options['soci'].with_mysql = self.options.with_mysql
-        self.options["boost"].shared = True
+        self.options['poco'].enable_data_mysql = self.options.with_mysql
+        self.options['poco'].enable_netssl = True
+        self.options['poco'].enable_net = True
+        self.options['poco'].shared = False
+        self.options['boost'].shared = True
 
     def requirements(self) -> None:
         self.requires('nlohmann_json/3.11.2')
+        self.requires('libmysqlclient/8.0.31')
         self.requires('boost/1.81.0')
-        self.requires('soci/4.0.3')
+        self.requires('poco/1.12.4')
 
     def build(self) -> None:
         cmake = CMake(self)

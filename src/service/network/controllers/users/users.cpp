@@ -8,11 +8,11 @@
 #include <service/database/models/users/users.hpp>
 #include <service/database/models/users/users_auth.hpp>
 
-#include <soci/connection-pool.h>
+#include <Poco/Data/SessionPool.h>
 
 using namespace boost::beast;
 
-UsersController::UsersController(std::shared_ptr<soci::connection_pool> pool)
+UsersController::UsersController(std::shared_ptr<Poco::Data::SessionPool> pool)
 {
     usersTable_ = std::make_shared<UsersTable>(pool);
     authTable_ = std::make_shared<UsersAuthTable>(pool);

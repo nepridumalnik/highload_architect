@@ -4,14 +4,9 @@
 
 #include <service/network/router.hpp>
 
-#include <soci/connection-pool.h>
+#include <Poco/Data/SessionPool.h>
 
 #include <memory>
-
-namespace soci
-{
-    class session;
-} // namespace soci
 
 /// @brief Главная служба
 class Service
@@ -25,7 +20,7 @@ public:
 
 private:
     /// @brief Пул соединений
-    std::shared_ptr<soci::connection_pool> pool_;
+    std::shared_ptr<Poco::Data::SessionPool> pool_;
 
     /// @brief Маршрутизатор
     Router router_;

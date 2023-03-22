@@ -7,11 +7,14 @@
 #include <service/resources/connection_parameters.hpp>
 #include <service/settings/settings_reader.hpp>
 
-#include <soci/mysql/soci-mysql.h>
-#include <soci/connection-pool.h>
-#include <soci/session.h>
+#include <Poco/Data/MySQL/Connector.h>
+#include <Poco/Data/MySQL/MySQLException.h>
+#include <Poco/Data/SessionFactory.h>
+#include <Poco/Data/SessionPool.h>
+#include <Poco/Data/Session.h>
 
 #include <vector>
+#include <iostream>
 
 std::string GetConnectionInfo()
 {
@@ -43,7 +46,7 @@ std::string GetConnectionInfo()
 
         if (!connectionInfo.empty())
         {
-            connectionInfo += ' ';
+            connectionInfo += ';';
         }
 
         connectionInfo += parameter.first + '=' + newParameter;
@@ -54,15 +57,18 @@ std::string GetConnectionInfo()
 
 Service::Service()
 {
-    static constexpr size_t poolSize = 100;
+    using namespace Poco::Data;
+
+    static constexpr size_t maxPoolSize = 100;
+    static constexpr size_t minPoolSize = 1;
+    static constexpr size_t idleTime = 10;
+    static constexpr size_t timeout = 10;
+
     const std::string connectionInfo = GetConnectionInfo();
+    MySQL::Connector::registerConnector();
 
-    std::shared_ptr<soci::connection_pool> pool = std::make_shared<soci::connection_pool>(poolSize);
-
-    for (size_t i = 0; i < poolSize; ++i)
-    {
-        pool->at(i).open(soci::mysql, connectionInfo);
-    }
+    std::shared_ptr<SessionPool> pool =
+        std::make_shared<SessionPool>(MySQL::Connector::KEY, connectionInfo, minPoolSize, maxPoolSize, idleTime, timeout);
 
     router_.AddController(std::make_unique<UsersController>(pool));
 }

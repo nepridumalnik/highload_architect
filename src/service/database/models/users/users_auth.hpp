@@ -9,19 +9,19 @@
 
 class UsersTable;
 
-namespace soci
+namespace Poco::Data
 {
-    class connection_pool;
-} // namespace soci
+    class SessionPool;
+} // namespace Poco::Data
 
 /// @brief Класс, управляющий таблицей с авторизациями пользователей
 class UsersAuthTable
-    : public AbstractTableModel<UserAuthRow, const std::string &, std::shared_ptr<soci::connection_pool>>
+    : public AbstractTableModel<UserAuthRow, const std::string &, std::shared_ptr<Poco::Data::SessionPool>>
 {
 public:
     /// @brief Конструктор
     /// @param pool База данных с пользовательской таблицей, от которой зависит эта таблица
-    explicit UsersAuthTable(std::shared_ptr<soci::connection_pool> pool);
+    explicit UsersAuthTable(std::shared_ptr<Poco::Data::SessionPool> pool);
 
     /// @see AbstractTableModel
     bool Insert(const UserAuthRow &auth, std::string &error) final;
@@ -36,9 +36,9 @@ public:
     bool Delete(const size_t id, std::string &error) final;
 
     /// @see AbstractTableModel
-    std::shared_ptr<soci::connection_pool> GetPool() final;
+    std::shared_ptr<Poco::Data::SessionPool> GetPool() final;
 
 private:
     /// @brief Пул соединений
-    std::shared_ptr<soci::connection_pool> pool_;
+    std::shared_ptr<Poco::Data::SessionPool> pool_;
 };

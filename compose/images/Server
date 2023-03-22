@@ -12,7 +12,7 @@ RUN rm -rf build
 RUN mkdir build
 WORKDIR /build/build
 
-RUN conan install ../conan --build=soci
+RUN conan install ../conan --build=missing
 RUN cmake .. && cmake --build . --parallel
 RUN mkdir app && cp bin/* app && cp lib/* app
 RUN tar cvf app.tar.gz app

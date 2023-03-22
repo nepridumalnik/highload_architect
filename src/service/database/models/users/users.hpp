@@ -8,18 +8,18 @@
 #include <memory>
 #include <vector>
 
-namespace soci
+namespace Poco::Data
 {
-    class connection_pool;
-} // namespace soci
+    class SessionPool;
+} // namespace Poco::Data
 
 /// @brief Класс, управляющий таблицей с пользователями
-class UsersTable : public AbstractTableModel<UserRow, UserRowCond, std::shared_ptr<soci::connection_pool>>
+class UsersTable : public AbstractTableModel<UserRow, UserRowCond, std::shared_ptr<Poco::Data::SessionPool>>
 {
 public:
     /// @brief Конструктор
     /// @param pool Пул соединений
-    explicit UsersTable(std::shared_ptr<soci::connection_pool> pool_);
+    explicit UsersTable(std::shared_ptr<Poco::Data::SessionPool> pool_);
 
     /// @see AbstractTableModel
     bool Insert(const UserRow &user, std::string &error) final;
@@ -34,7 +34,7 @@ public:
     bool Delete(const size_t id, std::string &error) final;
 
     /// @see AbstractTableModel
-    std::shared_ptr<soci::connection_pool> GetPool() final;
+    std::shared_ptr<Poco::Data::SessionPool> GetPool() final;
 
     /// @brief Поиск по имени и фамилии
     /// @param firstName Имя
@@ -45,5 +45,5 @@ public:
 
 private:
     /// @brief Пул соединений
-    std::shared_ptr<soci::connection_pool> pool_;
+    std::shared_ptr<Poco::Data::SessionPool> pool_;
 };
