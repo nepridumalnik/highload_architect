@@ -9,8 +9,11 @@ set(SOURCE
 )
 
 set(LIBRARIES
-    boost_thread
-    ${SOCI_LIBS}
+    ${CONAN_LIBS_LIBMYSQLCLIENT}
+    ${CONAN_LIBS_ZLIB}
+    ${CONAN_LIBS_ZSTD}
+    ${CONAN_LIBS_OPENSSL}
+    ${CONAN_LIBS_POCO}
 )
 
 if(UNIX)

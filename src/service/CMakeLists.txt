@@ -15,8 +15,6 @@ set(SOURCE
 set(LIBRARIES
     database
     network
-    ${SOCI_LIBS}
-    ${CONAN_LIBS_POCO}
 )
 
 add_library(${TARGET} SHARED ${SOURCE})
