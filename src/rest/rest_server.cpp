@@ -2,17 +2,44 @@
 
 #include <http/request_handler.hpp>
 
+#include <resources/connection_parameters.hpp>
+#include <settings/settings_reader.hpp>
+
 #include <Poco/Data/MySQL/Connector.h>
 #include <Poco/Data/SessionFactory.h>
 #include <Poco/Data/SessionPool.h>
 #include <Poco/Data/Session.h>
 
-namespace
+std::string GetConnectionInfo()
 {
-
-    static const std::string ConnectionInfo = "host=localhost;port=3306;db=main_database;user=root;password===PaSsWoRd==";
-
-} // namespace
+    static const std::vector<std::pair<const std::string, const std::string>> Parameters{
+        {connection_parameters::Host, connection_parameters::DefaultHost},
+        {connection_parameters::Port, connection_parameters::DefaultPort},
+        {connection_parameters::Database, connection_parameters::DefaultDatabase},
+        {connection_parameters::User, connection_parameters::DefaultUser},
+        {connection_parameters::Password, connection_parameters::DefaultPassword},
+    };
+    SettingsReader reader;
+    if (!reader.ReadFile("settings.json"))
+    {
+        return connection_parameters::DefaultConnectionInfo;
+    }
+    std::string connectionInfo;
+    for (const auto &parameter : Parameters)
+    {
+        std::string newParameter = reader.GetParameter<std::string>(parameter.first);
+        if (newParameter.empty())
+        {
+            newParameter = parameter.second;
+        }
+        if (!connectionInfo.empty())
+        {
+            connectionInfo += ';';
+        }
+        connectionInfo += parameter.first + '=' + newParameter;
+    }
+    return connectionInfo;
+}
 
 RestServer::RestServer(std::shared_ptr<Poco::Data::SessionPool> pool)
 {
@@ -23,11 +50,13 @@ RestServer::RestServer(std::shared_ptr<Poco::Data::SessionPool> pool)
     static constexpr size_t idleTime = 10;
     static constexpr size_t timeout = 10;
 
+    const std::string connectionInfo = GetConnectionInfo();
+
     MySQL::Connector::registerConnector();
 
     if (!pool)
     {
-        pool = std::make_shared<SessionPool>(MySQL::Connector::KEY, ::ConnectionInfo, minPoolSize, maxPoolSize, idleTime, timeout);
+        pool = std::make_shared<SessionPool>(MySQL::Connector::KEY, connectionInfo, minPoolSize, maxPoolSize, idleTime, timeout);
     }
 
     requestHandler_ = Poco::makeShared<RequestHandler>(pool);

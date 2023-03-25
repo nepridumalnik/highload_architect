@@ -20,6 +20,8 @@ set(SOURCES
     resources/messages.cpp
     resources/connection_parameters.cpp
 
+    settings/settings_reader.cpp
+
     utils/utils.cpp
 )
 
