@@ -37,9 +37,11 @@ public:
         }
         return {};
     }
+
     /// @brief Очистить настройки
     void Clear();
 
 private:
+    /// @brief Хранилище параметров
     nlohmann::json parameters_;
 };
