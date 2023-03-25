@@ -1,22 +1,19 @@
-add_subdirectory(service)
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/rest
+)
 
-set(TARGET highload_server)
+add_subdirectory(rest)
+
+set(TARGET rest)
 
 set(SOURCES
     main.cpp
 )
 
 set(LIBRARIES
-    service
+    rest_server
 )
 
-if(UNIX)
-    list(APPEND LIBRARIES
-        pthread
-    )
-endif(UNIX)
-
-add_executable(${TARGET} ${SOURCES})
-target_link_libraries(${TARGET} PUBLIC ${LIBRARIES})
-
-install(TARGETS ${TARGET})
+add_executable(${TARGET} main.cpp)
+target_link_libraries(${TARGET} PUBLIC rest_server)

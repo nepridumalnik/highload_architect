@@ -1,19 +1,11 @@
-#include <service/service.hpp>
-
-#include <stdexcept>
-#include <iostream>
+#include <rest_server.hpp>
 
 int main(int argc, char const *argv[])
 {
-    try
-    {
-        Service service;
-        service.Run();
-    }
-    catch (const std::exception &e)
-    {
-        std::cerr << "Error: " << e.what() << std::endl;
-    }
+    RestServer server;
+    server.Start();
+
+    server.WaitForTerminationRequest();
 
     return 0;
 }
