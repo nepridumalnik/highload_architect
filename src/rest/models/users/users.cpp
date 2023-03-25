@@ -207,8 +207,6 @@ bool UsersTable::SearchByNames(std::vector<UserRow> &users, std::string &firstNa
 {
     try
     {
-        UserRow user{};
-
         Session sql = pool_->get();
         Statement statement{sql};
         statement << querries::SearchUsers, use(firstName), use(secondName), now;
@@ -216,7 +214,7 @@ bool UsersTable::SearchByNames(std::vector<UserRow> &users, std::string &firstNa
         RecordSet result{statement};
 
         users.clear();
-        users.resize(result.rowCount());
+        users.resize(result.rowCount() - 1);
         size_t counter = 0;
 
         while (result.moveNext())

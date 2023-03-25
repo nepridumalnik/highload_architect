@@ -47,8 +47,8 @@ RestServer::RestServer(std::shared_ptr<Poco::Data::SessionPool> pool)
 
     static constexpr size_t maxPoolSize = 100;
     static constexpr size_t minPoolSize = 1;
-    static constexpr size_t idleTime = 10;
-    static constexpr size_t timeout = 10;
+    static constexpr size_t idleTime = 1000;
+    static constexpr size_t timeout = 100;
 
     const std::string connectionInfo = GetConnectionInfo();
 
@@ -60,7 +60,14 @@ RestServer::RestServer(std::shared_ptr<Poco::Data::SessionPool> pool)
     }
 
     requestHandler_ = Poco::makeShared<RequestHandler>(pool);
-    server_ = Poco::makeShared<Poco::Net::HTTPServer>(requestHandler_);
+
+    Poco::Net::HTTPServerParams::Ptr params = new Poco::Net::HTTPServerParams{};
+    params->setMaxThreads(1000);
+    params->setMaxQueued(1000);
+    params->setThreadIdleTime(10000);
+    params->setThreadPriority(Poco::Thread::PRIO_HIGHEST);
+
+    server_ = Poco::makeShared<Poco::Net::HTTPServer>(requestHandler_, 80, params);
 }
 
 void RestServer::Start()
