@@ -4,7 +4,7 @@ FROM debian:bullseye AS build
 WORKDIR /build
 
 RUN apt update
-RUN apt install -y python3-pip cmake
+RUN apt install -y python3-pip cmake clang
 RUN pip3 install conan==1.59.0
 
 ADD ../.. /build
@@ -12,7 +12,7 @@ RUN rm -rf build
 RUN mkdir build
 WORKDIR /build/build
 
-RUN conan install ../conan --build=missing
+RUN conan install ../conan/ --profile=../profiles/linux_common --build=missing
 RUN cmake .. && cmake --build . --parallel
 RUN mkdir app && cp bin/* app && cp lib/* app
 RUN tar cvf app.tar.gz app
@@ -29,4 +29,4 @@ COPY --from=build /build/build/app.tar.gz /
 RUN tar xvf app.tar.gz
 WORKDIR /app
 
-CMD ["./highload_server"]
+CMD ["./rest"]
