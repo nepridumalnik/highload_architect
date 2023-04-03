@@ -46,7 +46,4 @@ private:
 
     /// @brief Таблица авторизаций
     std::shared_ptr<UsersAuthTable> authTable_;
-
-    /// @brief Путь до /user/register
-    static const std::string route_;
 };

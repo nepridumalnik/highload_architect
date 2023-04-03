@@ -27,7 +27,4 @@ private:
 private:
     /// @brief Таблица с пользователями
     std::shared_ptr<UsersTable> usersTable_;
-
-    /// @brief Путь до /user/search
-    static const std::string route_;
 };
