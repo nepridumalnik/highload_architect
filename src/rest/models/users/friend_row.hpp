@@ -11,8 +11,8 @@ struct FriendRow : public AbstractTableRow
     int id;
 
     /// @brief Пользователь
-    std::string user;
+    int user;
 
     /// @brief Друг пользователя
-    std::string other;
+    int other;
 };

@@ -4,9 +4,11 @@
 #include <http/controllers/user_login.hpp>
 #include <http/controllers/user_register.hpp>
 #include <http/controllers/user_search.hpp>
+#include <http/controllers/make_friends.hpp>
 
 #include <models/users/users.hpp>
 #include <models/users/users_auth.hpp>
+#include <models/users/friends.hpp>
 
 #include <Poco/Net/HTTPServerRequest.h>
 #include <Poco/Data/SessionPool.h>
@@ -16,6 +18,7 @@ RequestHandler::RequestHandler(std::shared_ptr<Poco::Data::SessionPool> pool)
 {
     usersTable_ = std::make_shared<UsersTable>(pool_);
     authTable_ = std::make_shared<UsersAuthTable>(pool_);
+    friendsTable_ = std::make_shared<FriendsTable>(pool_);
 
     routing_.push_back({"/user/get", [&usersTable = usersTable_, this]()
                         { return new UserGetController{usersTable}; }});
@@ -28,6 +31,12 @@ RequestHandler::RequestHandler(std::shared_ptr<Poco::Data::SessionPool> pool)
 
     routing_.push_back({"/user/search", [&usersTable = usersTable_, this]()
                         { return new UserSearchController{usersTable}; }});
+
+    routing_.push_back({
+        "/friends",
+        [&friendsTable = friendsTable_]()
+        { return new FriendsController{friendsTable}; },
+    });
 }
 
 Poco::Net::HTTPRequestHandler *RequestHandler::createRequestHandler(const Poco::Net::HTTPServerRequest &request)

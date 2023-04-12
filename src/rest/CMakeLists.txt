@@ -8,6 +8,7 @@ set(SOURCES
     http/controllers/user_login.cpp
     http/controllers/user_register.cpp
     http/controllers/user_search.cpp
+    http/controllers/make_friends.cpp
 
     models/users/users.cpp
     models/users/users_auth.cpp
