@@ -14,6 +14,7 @@ set(SOURCES
     models/users/user_find_condition.cpp
     models/users/user_row.cpp
     models/users/user_auth_row.cpp
+    models/users/friends.cpp
 
     resources/jsons.cpp
     resources/methods.cpp
