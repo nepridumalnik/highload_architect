@@ -18,4 +18,6 @@ namespace json_fields
     const std::string Unathorized = "unathorized";
     const std::string Status = "status";
     const std::string Success = "success";
+    const std::string User = "user";
+    const std::string Friend = "friend";
 } // namespace json_fields

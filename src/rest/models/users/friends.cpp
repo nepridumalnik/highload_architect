@@ -21,18 +21,27 @@ using namespace Poco::Data;
 /// @brief Запросы к MySQL базе данных
 namespace querries
 {
-    static const std::string CreateTable = "ENGINE=InnoDB CHARSET=utf8";
-    static const std::string InsertFriend = "";
-    static const std::string SelectFriendById = "";
-    static const std::string SelectFriendByCondition = "";
-    static const std::string DeleteFriend = "";
-    static const std::string SearchFriends = "";
+    static const std::string CreateTable = "CREATE TABLE IF NOT EXISTS Friends (\n"
+                                           "ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,\n"
+                                           "User INT NOT NULL UNIQUE,"
+                                           "Friend INT NOT NULL UNIQUE"
+                                           ") ENGINE=InnoDB CHARSET=utf8";
+    static const std::string InsertFriend = "INSERT INTO Friends(User, Friend) VALUES(?, ?)";
+    static const std::string SelectFriendById = "SELECT DISTINCT ID, User, Friend FROM Friends WHERE ID = ?";
+    static const std::string SelectFriendByCondition = "SELECT DISTINCT ID, User, Friend FROM Friends WHERE User = ? AND Friend = ?";
+    static const std::string DeleteFriend = "DELETE FROM Friends WHERE ID = ?";
+    static const std::string SearchFriends = "SELECT DISTINCT ID, User, Friend FROM Friends "
+                                             "WHERE User = ? OR Friend = ?";
 } // namespace querries
 
 FriendsTable::FriendsTable(std::shared_ptr<Poco::Data::SessionPool> pool) : pool_{pool}
 {
     try
     {
+        Session sql = pool_->get();
+        Transaction transaction{sql};
+        sql << querries::CreateTable;
+        transaction.commit();
     }
     catch (const Poco::NotFoundException &e)
     {
@@ -50,6 +59,23 @@ bool FriendsTable::Insert(FriendRow &friendRow, std::string &error)
 {
     try
     {
+        Session sql = pool_->get();
+        Transaction transaction{sql};
+        Statement statement{sql};
+
+        statement << querries::InsertFriend, use(friendRow.user), use(friendRow.other);
+
+        const size_t res = statement.execute();
+
+        if (res != 1)
+        {
+            error = messages::InsertionError;
+            return false;
+        }
+
+        transaction.commit();
+
+        return true;
     }
     catch (const std::exception &e)
     {

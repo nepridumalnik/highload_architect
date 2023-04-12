@@ -21,4 +21,6 @@ namespace json_fields
     extern const std::string Unathorized;
     extern const std::string Status;
     extern const std::string Success;
+    extern const std::string User;
+    extern const std::string Friend;
 } // namespace json_fields
