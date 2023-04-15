@@ -92,6 +92,19 @@ bool FriendsTable::FindById(size_t id, FriendRow &friendRow, std::string &error)
 {
     try
     {
+        Session sql = pool_->get();
+        Statement statement{sql};
+        statement << querries::SelectFriendById, use(id),
+            into(friendRow.id), into(friendRow.user), into(friendRow.other);
+
+        const size_t res = statement.execute();
+
+        if (res != 1)
+        {
+            error = messages::NotFound;
+            return false;
+        }
+
         return true;
     }
     catch (const std::exception &e)
@@ -106,6 +119,22 @@ bool FriendsTable::Delete(size_t id, std::string &error)
 {
     try
     {
+        Session sql = pool_->get();
+        Transaction transaction{sql};
+        Statement statement{sql};
+        statement << querries::DeleteFriend, use(id);
+
+        const size_t res = statement.execute();
+
+        if (res != 1)
+        {
+            error = messages::DeletionError;
+            return false;
+        }
+
+        transaction.commit();
+
+        return true;
     }
     catch (const std::exception &e)
     {
@@ -119,6 +148,21 @@ bool FriendsTable::FindByCondition(FriendRow &condition, FriendRow &friendRow, s
 {
     try
     {
+        Session sql = pool_->get();
+        Statement statement{sql};
+        statement << querries::SelectFriendByCondition,
+            use(condition.user), use(condition.other),
+            into(condition.id), into(condition.user), into(condition.other);
+
+        const size_t res = statement.execute();
+
+        if (res != 1)
+        {
+            error = messages::NotFound;
+            return false;
+        }
+
+        return true;
     }
     catch (const std::exception &e)
     {
