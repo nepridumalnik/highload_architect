@@ -152,7 +152,7 @@ bool FriendsTable::FindByCondition(FriendRow &condition, FriendRow &friendRow, s
         Statement statement{sql};
         statement << querries::SelectFriendByCondition,
             use(condition.user), use(condition.other),
-            into(condition.id), into(condition.user), into(condition.other);
+            into(friendRow.id), into(friendRow.user), into(friendRow.other);
 
         const size_t res = statement.execute();
 
