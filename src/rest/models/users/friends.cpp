@@ -40,7 +40,11 @@ FriendsTable::FriendsTable(std::shared_ptr<Poco::Data::SessionPool> pool) : pool
     {
         Session sql = pool_->get();
         Transaction transaction{sql};
-        sql << querries::CreateTable;
+
+        Statement statement{sql};
+        statement << querries::CreateTable;
+        statement.execute();
+
         transaction.commit();
     }
     catch (const Poco::NotFoundException &e)
@@ -89,6 +93,7 @@ bool FriendsTable::FindById(size_t id, FriendRow &friendRow, std::string &error)
 {
     try
     {
+        return true;
     }
     catch (const std::exception &e)
     {

@@ -50,7 +50,11 @@ UsersTable::UsersTable(std::shared_ptr<Poco::Data::SessionPool> pool) : pool_{po
     {
         Session sql = pool_->get();
         Transaction transaction{sql};
-        sql << querries::CreateTable;
+
+        Statement statement{sql};
+        statement << querries::CreateTable;
+        statement.execute();
+
         transaction.commit();
     }
     catch (const Poco::NotFoundException &e)
@@ -97,6 +101,10 @@ bool UsersTable::Insert(UserRow &user, std::string &error)
         transaction.commit();
 
         return true;
+    }
+    catch (const Poco::Data::MySQL::MySQLException &e)
+    {
+        error = e.displayText();
     }
     catch (const std::exception &e)
     {

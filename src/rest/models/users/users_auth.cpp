@@ -40,7 +40,11 @@ UsersAuthTable::UsersAuthTable(std::shared_ptr<Poco::Data::SessionPool> pool)
     {
         Session sql = pool_->get();
         Transaction transaction{sql};
-        sql << querries::CreateTable;
+
+        Statement statement{sql};
+        statement << querries::CreateTable;
+        statement.execute();
+
         transaction.commit();
     }
     catch (const std::exception &e)
