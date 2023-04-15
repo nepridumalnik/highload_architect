@@ -17,6 +17,8 @@ set(SOURCES
     models/users/user_auth_row.cpp
     models/users/friends.cpp
     models/users/friend_row.cpp
+    models/users/posts.cpp
+    models/users/post_row.cpp
 
     resources/jsons.cpp
     resources/methods.cpp

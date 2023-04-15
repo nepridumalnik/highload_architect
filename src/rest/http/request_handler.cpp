@@ -9,16 +9,18 @@
 #include <models/users/users.hpp>
 #include <models/users/users_auth.hpp>
 #include <models/users/friends.hpp>
+#include <models/users/posts.hpp>
 
 #include <Poco/Net/HTTPServerRequest.h>
 #include <Poco/Data/SessionPool.h>
 
 RequestHandler::RequestHandler(std::shared_ptr<Poco::Data::SessionPool> pool)
-    : pool_{pool}
+    : pool_{std::move(pool)}
 {
     usersTable_ = std::make_shared<UsersTable>(pool_);
     authTable_ = std::make_shared<UsersAuthTable>(pool_);
     friendsTable_ = std::make_shared<FriendsTable>(pool_);
+    postsTable_ = std::make_shared<PostsTable>(pool_);
 
     routing_.push_back({"/user/get", [&usersTable = usersTable_, this]()
                         { return new UserGetController{usersTable}; }});

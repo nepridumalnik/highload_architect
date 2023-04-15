@@ -15,6 +15,7 @@ namespace Poco::Data
 class UsersTable;
 class UsersAuthTable;
 class FriendsTable;
+class PostsTable;
 
 class RequestHandler : public Poco::Net::HTTPRequestHandlerFactory
 {
@@ -32,6 +33,9 @@ private:
 
     /// @brief Таблица с друзьями
     std::shared_ptr<FriendsTable> friendsTable_;
+
+    /// @brief Таблица с постами
+    std::shared_ptr<PostsTable> postsTable_;
 
     /// @brief Пул соединений
     std::shared_ptr<Poco::Data::SessionPool> pool_;

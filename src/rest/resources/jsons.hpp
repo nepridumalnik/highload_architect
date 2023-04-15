@@ -23,4 +23,5 @@ namespace json_fields
     extern const std::string Success;
     extern const std::string User;
     extern const std::string Friend;
+    extern const std::string Post;
 } // namespace json_fields
