@@ -10,7 +10,6 @@
 #include <Poco/Data/Connector.h>
 #include <Poco/Data/Statement.h>
 #include <Poco/Data/RecordSet.h>
-#include <Poco/Data/MySQL/MySQLException.h>
 
 #include <stdexcept>
 #include <iostream>
@@ -101,10 +100,6 @@ bool UsersTable::Insert(UserRow &user, std::string &error)
         transaction.commit();
 
         return true;
-    }
-    catch (const Poco::Data::MySQL::MySQLException &e)
-    {
-        error = e.displayText();
     }
     catch (const std::exception &e)
     {

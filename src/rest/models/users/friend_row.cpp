@@ -10,13 +10,13 @@ bool FriendRow::FromJson(const std::string &json)
 {
     const nlohmann::json object = nlohmann::json::parse(json);
 
-    for (const auto &field : {std::ref(json_fields::Id), std::ref(json_fields::User),
-                              std::ref(json_fields::Friend)})
+    if (!object.contains(json_fields::User) || !object[json_fields::User].is_number_integer())
     {
-        if (!object.contains(field) && !object[field].is_string())
-        {
-            return false;
-        }
+        return false;
+    }
+    if (!object.contains(json_fields::Friend) || !object[json_fields::Friend].is_number_integer())
+    {
+        return false;
     }
 
     id = 0;

@@ -37,8 +37,8 @@ void UserSearchController::searchUsers(Poco::Net::HTTPServerRequest &req,
     Poco::StreamCopier::copyToString(bodyStream, body);
     const nlohmann::json object = nlohmann::json::parse(body);
 
-    if ((!object.contains(json_fields::FirstName) && !object[json_fields::FirstName].is_string()) ||
-        (!object.contains(json_fields::SecondName) && !object[json_fields::SecondName].is_string()))
+    if ((!object.contains(json_fields::FirstName) || !object[json_fields::FirstName].is_string()) ||
+        (!object.contains(json_fields::SecondName) || !object[json_fields::SecondName].is_string()))
     {
         res.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
         res.send() << nlohmann::json{{json_fields::Error, messages::WrongJsonFormat}}.dump();

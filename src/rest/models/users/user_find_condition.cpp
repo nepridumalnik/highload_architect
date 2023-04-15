@@ -10,7 +10,7 @@ bool UserRowCond::FromJson(const std::string &json)
 
     for (const auto &field : {std::ref(json_fields::Password), std::ref(json_fields::Email)})
     {
-        if (!object.contains(field) && !object[field].is_string())
+        if (!object.contains(field) || !object[field].is_string())
         {
             return false;
         }

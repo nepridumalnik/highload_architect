@@ -79,7 +79,7 @@ void UserLoginController::unauthorize(Poco::Net::HTTPServerRequest &req,
     Poco::StreamCopier::copyToString(bodyStream, body);
     const nlohmann::json object = nlohmann::json::parse(body);
 
-    if (!object.contains(json_fields::Token) && !object[json_fields::Token].is_string())
+    if (!object.contains(json_fields::Token) || !object[json_fields::Token].is_string())
     {
         res.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
         return;
@@ -109,7 +109,7 @@ void UserLoginController::authenticate(Poco::Net::HTTPServerRequest &req,
     Poco::StreamCopier::copyToString(bodyStream, body);
     const nlohmann::json object = nlohmann::json::parse(body);
 
-    if (!object.contains(json_fields::Token) && !object[json_fields::Token].is_string())
+    if (!object.contains(json_fields::Token) || !object[json_fields::Token].is_string())
     {
         res.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
         return;

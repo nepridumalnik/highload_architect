@@ -28,7 +28,6 @@ void UserRegisterController::handleRequest(Poco::Net::HTTPServerRequest &req,
     std::istream &bodyStream = req.stream();
     std::string body;
     Poco::StreamCopier::copyToString(bodyStream, body);
-    const nlohmann::json object = nlohmann::json::parse(body);
 
     UserRow user{};
     std::string error;

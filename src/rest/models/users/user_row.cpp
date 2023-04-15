@@ -16,17 +16,17 @@ bool UserRow::FromJson(const std::string &json)
                               std::ref(json_fields::Interests), std::ref(json_fields::City),
                               std::ref(json_fields::Password), std::ref(json_fields::Email)})
     {
-        if (!object.contains(field) && !object[field].is_string())
+        if (!object.contains(field) || !object[field].is_string())
         {
             return false;
         }
     }
 
-    if (!object.contains(json_fields::Age) && !object[json_fields::Age].is_number())
+    if (!object.contains(json_fields::Age) || !object[json_fields::Age].is_number())
     {
         return false;
     }
-    if (!object.contains(json_fields::Male) && !object[json_fields::Male].is_boolean())
+    if (!object.contains(json_fields::Male) || !object[json_fields::Male].is_boolean())
     {
         return false;
     }

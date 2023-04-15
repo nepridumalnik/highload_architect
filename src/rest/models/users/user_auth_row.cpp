@@ -10,7 +10,7 @@ bool UserAuthRow::FromJson(const std::string &json)
 
     for (const auto &field : {std::ref(json_fields::Id), std::ref(json_fields::Token)})
     {
-        if (!object.contains(field) && !object[field].is_string())
+        if (!object.contains(field) || !object[field].is_string())
         {
             return false;
         }
