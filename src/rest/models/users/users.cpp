@@ -86,7 +86,7 @@ bool UsersTable::Insert(UserRow &user, std::string &error)
 
         statement << querries::InsertUser,
             use(user.name), use(user.secondName),
-            use(user.age), into(*reinterpret_cast<int *>(&user.male)),
+            use(user.age), use(*reinterpret_cast<int *>(&user.male)),
             use(user.interests), use(user.city),
             use(tmpPassword), use(user.email);
 
