@@ -4,6 +4,7 @@
 
 #include <memory>
 
+class UsersTable;
 class PostsTable;
 class PostRow;
 
@@ -12,7 +13,8 @@ class PostsController : public Poco::Net::HTTPRequestHandler
 {
 public:
     /// @brief Конструктор
-    explicit PostsController(std::shared_ptr<PostsTable> postsTable);
+    explicit PostsController(std::shared_ptr<PostsTable> postsTable,
+                             std::shared_ptr<UsersTable> usersTable);
 
     /// @see HTTPRequestHandler
     void handleRequest(Poco::Net::HTTPServerRequest &req,
@@ -40,4 +42,7 @@ private:
 private:
     /// @brief Таблица с друзьями
     std::shared_ptr<PostsTable> postsTable_;
+
+    /// @brief Таблица с пользователями
+    std::shared_ptr<UsersTable> usersTable_;
 };

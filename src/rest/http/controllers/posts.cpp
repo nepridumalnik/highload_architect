@@ -2,6 +2,7 @@
 
 #include <models/users/posts.hpp>
 #include <models/users/post_row.hpp>
+#include <models/users/users.hpp>
 
 #include <resources/methods.hpp>
 #include <resources/jsons.hpp>
@@ -14,8 +15,9 @@
 
 #include <nlohmann/json.hpp>
 
-PostsController::PostsController(std::shared_ptr<PostsTable> postsTable)
-    : postsTable_{postsTable}
+PostsController::PostsController(std::shared_ptr<PostsTable> postsTable,
+                                 std::shared_ptr<UsersTable> usersTable)
+    : postsTable_{std::move(postsTable)}, usersTable_{std::move(usersTable)}
 {
 }
 
@@ -66,6 +68,15 @@ void PostsController::postPost(Poco::Net::HTTPServerRequest &req,
     std::string error;
     PostRow row{};
     row.user = object[json_fields::User].get<int>();
+    UserRow user;
+
+    if (!usersTable_->FindById(row.user, user, error))
+    {
+        res.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
+        res.send() << error;
+        return;
+    }
+
     row.post = object[json_fields::Post].get<std::string>();
 
     if (!postsTable_->Insert(row, error))

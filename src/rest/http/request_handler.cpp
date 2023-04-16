@@ -35,8 +35,8 @@ RequestHandler::RequestHandler(std::shared_ptr<Poco::Data::SessionPool> pool)
     routing_.push_back({"/user/search", [&usersTable = usersTable_, this]()
                         { return new UserSearchController{usersTable}; }});
 
-    routing_.push_back({"/posts", [&postsTable = postsTable_, this]()
-                        { return new PostsController{postsTable}; }});
+    routing_.push_back({"/posts", [&postsTable = postsTable_, &usersTable = usersTable_, this]()
+                        { return new PostsController{postsTable, usersTable}; }});
 
     routing_.push_back({
         "/friends",
