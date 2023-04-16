@@ -5,6 +5,7 @@
 #include <http/controllers/user_register.hpp>
 #include <http/controllers/user_search.hpp>
 #include <http/controllers/make_friends.hpp>
+#include <http/controllers/posts.hpp>
 
 #include <models/users/users.hpp>
 #include <models/users/users_auth.hpp>
@@ -33,6 +34,9 @@ RequestHandler::RequestHandler(std::shared_ptr<Poco::Data::SessionPool> pool)
 
     routing_.push_back({"/user/search", [&usersTable = usersTable_, this]()
                         { return new UserSearchController{usersTable}; }});
+
+    routing_.push_back({"/posts", [&postsTable = postsTable_, this]()
+                        { return new PostsController{postsTable}; }});
 
     routing_.push_back({
         "/friends",

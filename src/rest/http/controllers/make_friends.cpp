@@ -13,7 +13,6 @@
 #include <Poco/StreamCopier.h>
 
 #include <nlohmann/json.hpp>
-#include "make_friends.hpp"
 
 FriendsController::FriendsController(std::shared_ptr<FriendsTable> friendsTable)
     : friendsTable_{friendsTable}
