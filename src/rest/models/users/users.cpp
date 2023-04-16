@@ -217,10 +217,10 @@ bool UsersTable::SearchByNames(std::vector<UserRow> &users, std::string &firstNa
         RecordSet result{statement};
 
         users.clear();
-        users.resize(result.rowCount() - 1);
+        users.resize(result.rowCount());
         size_t counter = 0;
 
-        while (result.moveNext())
+        do
         {
             static const std::string id = "ID";
             static const std::string name = "Name";
@@ -243,7 +243,7 @@ bool UsersTable::SearchByNames(std::vector<UserRow> &users, std::string &firstNa
             users[counter].email = result[email].convert<std::string>();
 
             ++counter;
-        }
+        } while (result.moveNext());
 
         return true;
     }
