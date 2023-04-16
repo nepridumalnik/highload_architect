@@ -10,6 +10,8 @@
 #include <Poco/Data/SessionPool.h>
 #include <Poco/Data/Session.h>
 
+#include <sw/redis++/redis++.h>
+
 std::string GetConnectionInfo()
 {
     static const std::vector<std::pair<const std::string, const std::string>> Parameters{
@@ -52,6 +54,8 @@ RestServer::RestServer(std::shared_ptr<Poco::Data::SessionPool> pool)
 
     const std::string connectionInfo = GetConnectionInfo();
 
+    std::shared_ptr<sw::redis::Redis> redis = std::make_shared<sw::redis::Redis>("redis://localhost:6379");
+
     MySQL::Connector::registerConnector();
 
     if (!pool)
@@ -59,7 +63,7 @@ RestServer::RestServer(std::shared_ptr<Poco::Data::SessionPool> pool)
         pool = std::make_shared<SessionPool>(MySQL::Connector::KEY, connectionInfo, minPoolSize, maxPoolSize, idleTime, timeout);
     }
 
-    requestHandler_ = Poco::makeShared<RequestHandler>(pool);
+    requestHandler_ = Poco::makeShared<RequestHandler>(std::move(pool), std::move(redis));
 
     Poco::Net::HTTPServerParams::Ptr params = new Poco::Net::HTTPServerParams{};
     params->setMaxThreads(1000);

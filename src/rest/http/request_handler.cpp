@@ -15,8 +15,12 @@
 #include <Poco/Net/HTTPServerRequest.h>
 #include <Poco/Data/SessionPool.h>
 
-RequestHandler::RequestHandler(std::shared_ptr<Poco::Data::SessionPool> pool)
-    : pool_{std::move(pool)}
+#include <sw/redis++/redis++.h>
+
+RequestHandler::RequestHandler(std::shared_ptr<Poco::Data::SessionPool> pool,
+                               std::shared_ptr<sw::redis::Redis> redis)
+    : pool_{std::move(pool)},
+      redis_{std::move(redis)}
 {
     usersTable_ = std::make_shared<UsersTable>(pool_);
     authTable_ = std::make_shared<UsersAuthTable>(pool_);

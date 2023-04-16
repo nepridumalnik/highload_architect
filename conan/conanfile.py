@@ -21,6 +21,7 @@ class HighloadServer(ConanFile):
         self.options['poco'].enable_net = True
 
     def requirements(self) -> None:
+        self.requires('redis-plus-plus/1.3.7')
         self.requires('nlohmann_json/3.11.2')
         self.requires('poco/1.12.4')
 

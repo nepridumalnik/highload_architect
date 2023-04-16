@@ -12,6 +12,11 @@ namespace Poco::Data
     class SessionPool;
 } // namespace Poco::Data
 
+namespace sw::redis
+{
+    class Redis;
+} // namespace sw::redis
+
 class UsersTable;
 class UsersAuthTable;
 class FriendsTable;
@@ -20,7 +25,8 @@ class PostsTable;
 class RequestHandler : public Poco::Net::HTTPRequestHandlerFactory
 {
 public:
-    explicit RequestHandler(std::shared_ptr<Poco::Data::SessionPool> pool);
+    explicit RequestHandler(std::shared_ptr<Poco::Data::SessionPool> pool,
+                            std::shared_ptr<sw::redis::Redis> redis);
 
     Poco::Net::HTTPRequestHandler *createRequestHandler(const Poco::Net::HTTPServerRequest &request) override;
 
@@ -39,6 +45,9 @@ private:
 
     /// @brief Пул соединений
     std::shared_ptr<Poco::Data::SessionPool> pool_;
+
+    /// @brief Клиент редиски
+    std::shared_ptr<sw::redis::Redis> redis_;
 
     /// @brief Маршруты
     std::vector<std::pair<std::string, std::function<Poco::Net::HTTPRequestHandler *()>>> routing_;
