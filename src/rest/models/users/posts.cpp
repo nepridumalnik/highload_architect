@@ -106,6 +106,21 @@ bool PostsTable::Delete(size_t id, std::string &error)
 {
     try
     {
+        Session sql = pool_->get();
+        Transaction transaction{sql};
+        Statement statement{sql};
+        statement << querries::DeletePost, use(id);
+
+        const size_t res = statement.execute();
+
+        if (res != 1)
+        {
+            error = messages::DeletionError;
+            return false;
+        }
+
+        transaction.commit();
+
         return true;
     }
     catch (const std::exception &e)

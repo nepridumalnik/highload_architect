@@ -87,4 +87,28 @@ void PostsController::getPost(Poco::Net::HTTPServerRequest &req,
 void PostsController::deletePost(Poco::Net::HTTPServerRequest &req,
                                  Poco::Net::HTTPServerResponse &res)
 {
+    std::string body;
+    Poco::StreamCopier::copyToString(req.stream(), body);
+
+    const nlohmann::json object = nlohmann::json::parse(body);
+
+    if (!object.contains(json_fields::Id) || !object[json_fields::Id].is_number())
+    {
+        static const std::string error = nlohmann::json{{json_fields::Error, "Bad JSON format"}}.dump();
+        res.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
+        res.send() << error;
+        return;
+    }
+
+    std::string error;
+
+    if (!postsTable_->Delete(object[json_fields::Id].get<int>(), error))
+    {
+        res.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
+        res.send() << error;
+    }
+    else
+    {
+        res.send();
+    }
 }
