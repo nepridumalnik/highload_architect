@@ -64,12 +64,12 @@ void UserSearchController::searchUsers(Poco::Net::HTTPServerRequest &req,
         return;
     }
 
-    nlohmann::json usersJson{};
+    nlohmann::json array = nlohmann::json::array();
 
     for (const UserRow &user : users)
     {
-        usersJson.push_back(user.ToJson());
+        array.push_back(user.ToJson());
     }
 
-    res.send() << usersJson.dump();
+    res.send() << array.dump();
 }

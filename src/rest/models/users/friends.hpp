@@ -35,6 +35,13 @@ public:
     /// @see AbstractTableModel
     std::shared_ptr<Poco::Data::SessionPool> GetPool() final;
 
+    /// @brief Поиск по имени и фамилии
+    /// @param friends Друзья
+    /// @param id Id пользователя
+    /// @param error Строка с ошибкой
+    /// @return True, если удачно
+    bool GetAllFriends(std::vector<FriendRow> &friends, int id, std::string &error);
+
 private:
     /// @brief Пул соединений
     std::shared_ptr<Poco::Data::SessionPool> pool_;

@@ -6,11 +6,14 @@
 #include <resources/methods.hpp>
 #include <resources/jsons.hpp>
 
+#include <utils/utils.hpp>
+
 #include <Poco/Net/HTTPServerResponse.h>
 #include <Poco/Net/HTTPServerRequest.h>
 #include <Poco/StreamCopier.h>
 
 #include <nlohmann/json.hpp>
+#include "make_friends.hpp"
 
 FriendsController::FriendsController(std::shared_ptr<FriendsTable> friendsTable)
     : friendsTable_{friendsTable}
@@ -20,42 +23,124 @@ FriendsController::FriendsController(std::shared_ptr<FriendsTable> friendsTable)
 void FriendsController::handleRequest(Poco::Net::HTTPServerRequest &req,
                                       Poco::Net::HTTPServerResponse &res)
 {
-    const std::string method = req.getMethod();
+    const HttpMethod method = GetMethod(req.getMethod());
 
-    if (method != methods::Post && method != methods::Delete)
+    if (method != HttpMethod::Post &&
+        method != HttpMethod::Delete)
     {
-        res.send();
-        return;
-    }
-
-    std::istream &bodyStream = req.stream();
-    std::string body;
-    Poco::StreamCopier::copyToString(bodyStream, body);
-
-    FriendRow row{};
-    std::string error;
-
-    if (method == methods::Post)
-    {
-        if (!row.FromJson(body) || !friendsTable_->Insert(row, error))
+        if (method == HttpMethod::Get)
         {
-            res.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
-            res.send() << nlohmann::json{{json_fields::Error, error}}.dump();
+            getFriend(req, res);
             return;
         }
+        else
+        {
+            res.send();
+            return;
+        }
+    }
+
+    std::string body;
+    Poco::StreamCopier::copyToString(req.stream(), body);
+
+    FriendRow row{};
+
+    if (!row.FromJson(body))
+    {
+        static const std::string error = nlohmann::json{{json_fields::Error, "Bad JSON format"}}.dump();
+        res.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
+        res.send() << error;
+    }
+
+    if (HttpMethod::Post == method)
+    {
+        postFriend(row, res);
     }
     else
     {
-        FriendRow f{};
-        if (!row.FromJson(body) ||
-            !friendsTable_->FindByCondition(row, f, error) ||
-            !friendsTable_->Delete(f.id, error))
-        {
-            res.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
-            res.send() << nlohmann::json{{json_fields::Error, error}}.dump();
-            return;
-        }
+        deleteFriend(row, res);
     }
 
     res.send();
+}
+
+void FriendsController::postFriend(FriendRow &row, Poco::Net::HTTPServerResponse &res)
+{
+    std::string error;
+    if (!friendsTable_->Insert(row, error))
+    {
+        res.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
+        res.send() << nlohmann::json{{json_fields::Error, error}}.dump();
+    }
+}
+
+void FriendsController::deleteFriend(FriendRow &row, Poco::Net::HTTPServerResponse &res)
+{
+    std::string error;
+    FriendRow f{};
+    if (!friendsTable_->FindByCondition(row, f, error) ||
+        !friendsTable_->Delete(f.id, error))
+    {
+        res.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
+        res.send() << nlohmann::json{{json_fields::Error, error}}.dump();
+        return;
+    }
+}
+
+void FriendsController::getFriend(Poco::Net::HTTPServerRequest &req,
+                                  Poco::Net::HTTPServerResponse &res)
+{
+    std::string body;
+    Poco::StreamCopier::copyToString(req.stream(), body);
+
+    const nlohmann::json object = nlohmann::json::parse(body);
+
+    if (!object.contains(json_fields::User) || !object[json_fields::User].is_number())
+    {
+        static const std::string error = nlohmann::json{{json_fields::Error, "Bad JSON format"}}.dump();
+        res.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
+        res.send() << error;
+        return;
+    }
+
+    if (!object.contains(json_fields::Friend) || !object[json_fields::Friend].is_number())
+    {
+        std::string error;
+        std::vector<FriendRow> friends;
+
+        if (!friendsTable_->GetAllFriends(friends, object[json_fields::User].get<int>(), error))
+        {
+            res.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
+            res.send() << nlohmann::json{{json_fields::Error, error}}.dump();
+        }
+        else
+        {
+            nlohmann::json array = nlohmann::json::array();
+
+            for (const FriendRow &f : friends)
+            {
+                array.push_back(f.ToJson());
+            }
+
+            res.send() << array.dump();
+        }
+
+        return;
+    }
+
+    FriendRow row{};
+    FriendRow condition{};
+    std::string error;
+
+    condition.user = object[json_fields::User].get<int>();
+    condition.other = object[json_fields::Friend].get<int>();
+
+    if (!friendsTable_->FindByCondition(condition, row, error))
+    {
+        res.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
+        res.send() << nlohmann::json{{json_fields::Error, error}}.dump();
+        return;
+    }
+
+    res.send() << row.ToString();
 }

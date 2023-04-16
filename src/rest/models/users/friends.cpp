@@ -22,15 +22,15 @@ namespace querries
 {
     static const std::string CreateTable = "CREATE TABLE IF NOT EXISTS Friends (\n"
                                            "ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,\n"
-                                           "User INT NOT NULL UNIQUE,"
-                                           "Friend INT NOT NULL UNIQUE"
+                                           "User INT NOT NULL,"
+                                           "Friend INT NOT NULL"
                                            ") ENGINE=InnoDB CHARSET=utf8";
     static const std::string InsertFriend = "INSERT INTO Friends(User, Friend) VALUES(?, ?)";
     static const std::string SelectFriendById = "SELECT DISTINCT ID, User, Friend FROM Friends WHERE ID = ?";
     static const std::string SelectFriendByCondition = "SELECT DISTINCT ID, User, Friend FROM Friends WHERE User = ? AND Friend = ?";
     static const std::string DeleteFriend = "DELETE FROM Friends WHERE ID = ?";
-    static const std::string SearchFriends = "SELECT DISTINCT ID, User, Friend FROM Friends "
-                                             "WHERE User = ? OR Friend = ?";
+    static const std::string GetFriends = "SELECT ID, User, Friend FROM Friends "
+                                          "WHERE User = ?";
 } // namespace querries
 
 FriendsTable::FriendsTable(std::shared_ptr<Poco::Data::SessionPool> pool) : pool_{pool}
@@ -175,4 +175,41 @@ bool FriendsTable::FindByCondition(FriendRow &condition, FriendRow &friendRow, s
 std::shared_ptr<Poco::Data::SessionPool> FriendsTable::GetPool()
 {
     return pool_;
+}
+
+bool FriendsTable::GetAllFriends(std::vector<FriendRow> &friends, int id, std::string &error)
+{
+    try
+    {
+        Session sql = pool_->get();
+        Statement statement{sql};
+        statement << querries::GetFriends, use(id), now;
+
+        RecordSet result{statement};
+
+        friends.clear();
+        friends.resize(result.rowCount());
+        size_t counter = 0;
+
+        do
+        {
+            static const std::string id = "ID";
+            static const std::string user = "User";
+            static const std::string other = "Friend";
+
+            friends[counter].id = result[id].convert<int>();
+            friends[counter].user = result[user].convert<int>();
+            friends[counter].other = result[other].convert<int>();
+
+            ++counter;
+        } while (result.moveNext());
+
+        return true;
+    }
+    catch (const std::exception &e)
+    {
+        error = e.what();
+    }
+
+    return false;
 }
