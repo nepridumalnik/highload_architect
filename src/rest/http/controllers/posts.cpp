@@ -93,6 +93,51 @@ void PostsController::postPost(Poco::Net::HTTPServerRequest &req,
 void PostsController::getPost(Poco::Net::HTTPServerRequest &req,
                               Poco::Net::HTTPServerResponse &res)
 {
+    std::string body;
+    Poco::StreamCopier::copyToString(req.stream(), body);
+
+    const nlohmann::json object = nlohmann::json::parse(body);
+
+    if (object.contains(json_fields::Id) && object[json_fields::Id].is_number())
+    {
+        std::string error;
+        PostRow row{};
+
+        if (!postsTable_->FindById(object[json_fields::Id].get<int>(), row, error))
+        {
+            res.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
+            res.send() << error;
+            return;
+        }
+
+        res.send() << row.ToString();
+    }
+    else if (object.contains(json_fields::User) && object[json_fields::User].is_number() &&
+             object.contains(json_fields::Count) && object[json_fields::Count].is_number_unsigned())
+    {
+        std::string error;
+        std::vector<int> postIds;
+
+        if (!postsTable_->FindPostsByUserId(
+                postIds,
+                object[json_fields::User].get<int>(),
+                object[json_fields::Count].get<int>(),
+                error))
+        {
+            res.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
+            res.send() << error;
+            return;
+        }
+
+        nlohmann::json array = nlohmann::json::array();
+
+        for (const int &id : postIds)
+        {
+            array.push_back(id);
+        }
+
+        res.send() << array.dump();
+    }
 }
 
 void PostsController::deletePost(Poco::Net::HTTPServerRequest &req,

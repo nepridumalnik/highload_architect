@@ -35,6 +35,14 @@ public:
     /// @see AbstractTableModel
     std::shared_ptr<Poco::Data::SessionPool> GetPool() final;
 
+    /// @brief Получить посты пользователя
+    /// @param posts Вектор постов
+    /// @param id Идентификатор пользователя
+    /// @param limit Лимит
+    /// @param error Ошибка
+    /// @return True, если успешно
+    bool FindPostsByUserId(std::vector<int> &posts, int id, size_t limit, std::string &error);
+
 private:
     /// @brief Пул соединений
     std::shared_ptr<Poco::Data::SessionPool> pool_;

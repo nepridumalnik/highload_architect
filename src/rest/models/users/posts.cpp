@@ -29,8 +29,8 @@ namespace querries
     static const std::string SelectPostById = "SELECT DISTINCT ID, UserId, Post FROM Posts WHERE ID = ?";
     static const std::string SelectPostByCondition = "SELECT DISTINCT ID, UserId, Post FROM Posts WHERE UserId = ? AND Post = ?";
     static const std::string DeletePost = "DELETE FROM Posts WHERE ID = ?";
-    static const std::string SearchPosts = "SELECT DISTINCT ID, UserId, Post FROM Posts "
-                                           "WHERE UserId = ? OR Post = ?";
+    static const std::string SearchPosts = "SELECT ID FROM Posts "
+                                           "WHERE UserId = ? LIMIT ?";
 } // namespace querries
 
 PostsTable::PostsTable(std::shared_ptr<Poco::Data::SessionPool> pool) : pool_{pool}
@@ -92,6 +92,19 @@ bool PostsTable::FindById(size_t id, PostRow &post, std::string &error)
 {
     try
     {
+        Session sql = pool_->get();
+        Statement statement{sql};
+        statement << querries::SelectPostById, use(id),
+            into(post.id), into(post.user), into(post.post);
+
+        const size_t res = statement.execute();
+
+        if (res != 1)
+        {
+            error = messages::NotFound;
+            return false;
+        }
+
         return true;
     }
     catch (const std::exception &e)
@@ -135,6 +148,44 @@ bool PostsTable::FindByCondition(PostRow &condition, PostRow &post, std::string 
 {
     try
     {
+        return true;
+    }
+    catch (const std::exception &e)
+    {
+        error = e.what();
+    }
+
+    return false;
+}
+
+bool PostsTable::FindPostsByUserId(std::vector<int> &posts, int id, size_t limit, std::string &error)
+{
+    try
+    {
+        Session sql = pool_->get();
+        Statement statement{sql};
+        statement << querries::SearchPosts, use(id), use(limit), now;
+
+        RecordSet result{statement};
+
+        posts.resize(result.rowCount());
+
+        if (posts.empty())
+        {
+            return true;
+        }
+
+        size_t counter = 0;
+
+        do
+        {
+            static const std::string id = "ID";
+
+            posts[counter] = result[id].convert<int>();
+
+            ++counter;
+        } while (result.moveNext());
+
         return true;
     }
     catch (const std::exception &e)

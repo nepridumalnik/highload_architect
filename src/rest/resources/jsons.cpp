@@ -21,4 +21,5 @@ namespace json_fields
     const std::string User = "user";
     const std::string Friend = "friend";
     const std::string Post = "post";
+    const std::string Count = "count";
 } // namespace json_fields
