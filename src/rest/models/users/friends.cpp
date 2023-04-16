@@ -187,8 +187,13 @@ bool FriendsTable::GetAllFriends(std::vector<FriendRow> &friends, int id, std::s
 
         RecordSet result{statement};
 
-        friends.clear();
         friends.resize(result.rowCount());
+
+        if (friends.empty())
+        {
+            return true;
+        }
+
         size_t counter = 0;
 
         do

@@ -216,8 +216,13 @@ bool UsersTable::SearchByNames(std::vector<UserRow> &users, std::string &firstNa
 
         RecordSet result{statement};
 
-        users.clear();
         users.resize(result.rowCount());
+
+        if (users.empty())
+        {
+            return true;
+        }
+
         size_t counter = 0;
 
         do
