@@ -62,6 +62,22 @@ bool PostsTable::Insert(PostRow &post, std::string &error)
 {
     try
     {
+        Session sql = pool_->get();
+        Transaction transaction{sql};
+        Statement statement{sql};
+
+        statement << querries::InsertPost, use(post.user), use(post.post);
+
+        const size_t res = statement.execute();
+
+        if (res != 1)
+        {
+            error = messages::InsertionError;
+            return false;
+        }
+
+        transaction.commit();
+
         return true;
     }
     catch (const std::exception &e)

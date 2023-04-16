@@ -1,7 +1,7 @@
 #include <http/controllers/posts.hpp>
 
-#include <models/users/friends.hpp>
-#include <models/users/friend_row.hpp>
+#include <models/users/posts.hpp>
+#include <models/users/post_row.hpp>
 
 #include <resources/methods.hpp>
 #include <resources/jsons.hpp>
@@ -49,6 +49,34 @@ void PostsController::handleRequest(Poco::Net::HTTPServerRequest &req,
 void PostsController::postPost(Poco::Net::HTTPServerRequest &req,
                                Poco::Net::HTTPServerResponse &res)
 {
+    std::string body;
+    Poco::StreamCopier::copyToString(req.stream(), body);
+
+    const nlohmann::json object = nlohmann::json::parse(body);
+
+    if (!object.contains(json_fields::User) || !object[json_fields::User].is_number() ||
+        !object.contains(json_fields::Post) || !object[json_fields::Post].is_string())
+    {
+        static const std::string error = nlohmann::json{{json_fields::Error, "Bad JSON format"}}.dump();
+        res.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
+        res.send() << error;
+        return;
+    }
+
+    std::string error;
+    PostRow row{};
+    row.user = object[json_fields::User].get<int>();
+    row.post = object[json_fields::Post].get<std::string>();
+
+    if (!postsTable_->Insert(row, error))
+    {
+        res.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
+        res.send() << error;
+    }
+    else
+    {
+        res.send();
+    }
 }
 
 void PostsController::getPost(Poco::Net::HTTPServerRequest &req,
